@@ -1,9 +1,9 @@
 # Project-specific ignores
-tablextract/resources/.pickled/*
+tablextract/resources/.pickled/
 tablextract/resources/geckodriver*
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
+*/__pycache__/
 *.py[cod]
 *$py.class
 
