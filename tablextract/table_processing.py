@@ -25,6 +25,45 @@ PROPERTY_KINDS = {
 PROPERTY_KINDS = {k: v + ['%s-variability-%s' % (dim, feat) for feat in v for dim in ['row', 'col', 'tab']] for k, v in PROPERTY_KINDS.items()}
 MAX_SPAN = 150
 
+class Table:
+	def __init__(self, url=None, xpath=None, element=None):
+		self.url = url
+		self.xpath = xpath
+		self.element = element
+		self.elements = None
+		self.features = None
+		self.texts = None
+		self.context = None
+		self.functions = None
+		self.variabilities = {'row': None, 'col': None, 'table': None}
+		self.kind = 'unknown'
+		self.record = None
+		self.score = None
+		self.error = None
+
+	def rows(self):
+		return len(self.elements)
+
+	def cols(self):
+		if self.rows():
+			return len(self.elements[0])
+		else:
+			return 0
+
+	def cells(self):
+		if len(self.features):
+			return len(self.features) * len(self.features[0])
+		else:
+			return 0
+
+	def __repr__(self):
+		res = 'Table(url=%s, xpath=%s' % (self.url, self.xpath)
+		if self.error:
+			res += ', error=%s)' % self.error.strip().rsplit('\n', 1)[1]
+		else:
+			res += ')'
+		return res
+
 def locate(url, document):
 	res = []
 	if document.select_one('.noarticletext') != None:
@@ -516,42 +555,3 @@ def compute_score(table):
 		tokens_after = [kw.strip() for rec in table.record for k, v in rec.items() for kw in k.split(' ') + v.split(' ')]
 		information_loss_score = len([t for t in tokens if t in tokens_after]) / len(tokens)
 		table.score = (variability_score * numeric_header_score * data_header_score * information_loss_score) ** (1 / 4)
-
-class Table:
-	def __init__(self, url=None, xpath=None, element=None):
-		self.url = url
-		self.xpath = xpath
-		self.element = element
-		self.elements = None
-		self.features = None
-		self.texts = None
-		self.context = None
-		self.functions = None
-		self.variabilities = {'row': None, 'col': None, 'table': None}
-		self.kind = 'unknown'
-		self.record = None
-		self.score = None
-		self.error = None
-
-	def rows(self):
-		return len(self.elements)
-
-	def cols(self):
-		if self.rows():
-			return len(self.elements[0])
-		else:
-			return 0
-
-	def cells(self):
-		if len(self.features):
-			return len(self.features) * len(self.features[0])
-		else:
-			return 0
-
-	def __str__(self):
-		res = 'Table(url=%s, xpath=%s' % (self.url, self.xpath)
-		if self.error:
-			res += ', error=%s)' % self.error.strip().rsplit('\n', 1)[1]
-		else:
-			res += ')'
-		return res
