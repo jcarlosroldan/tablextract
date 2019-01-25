@@ -8,7 +8,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
 	name='tablextract',
-	version='1.0.11',
+	version='1.0.13',
 	author='Juan C. Roldán',
 	author_email='juancarlos@sevilla.es',
 	description='Extract the information represented in any HTML table',
@@ -20,8 +20,10 @@ setup(
 	package_data={'': ['resources/add_render.js']},
 	include_package_data=True,
 	classifiers=[
+		'Development Status :: 5 - Production/Stable',
+		'Intended Audience :: Developers',
+		'Natural Language :: English',
 		'Programming Language :: Python :: 3',
-		'License :: OSI Approved :: MIT License',
 		'Operating System :: OS Independent',
 	],
 )
