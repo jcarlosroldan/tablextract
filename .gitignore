@@ -1,6 +1,7 @@
 # Project-specific ignores
 tablextract/resources/.pickled/
 tablextract/resources/geckodriver*
+upload.bat
 
 # Byte-compiled / optimized / DLL files
 */__pycache__/
