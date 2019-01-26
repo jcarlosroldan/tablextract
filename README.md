@@ -2,12 +2,24 @@
 
 This Python 3 library extracts the information represented in any HTML table. This project has been developed in the context of the paper `TOMATE: On extracting information from HTML tables`.
 
+Some of the main features of this library are:
+
+* Context location: Context information is detected, both inside and outside the table.
+* Cell role detection: Classification of cells in headers and data based on the style, syntax, structure and semantics.
+* Layout detection: Automatic identification of horizontal listings, vertical listings, matrices and enumerations.
+* Record extraction: Identified tables are extracted as a list of dictionaries, each one being a database record.
+
+Some features that will be added soon:
+
+* Cell correction: Analysis of the orientation of the table to fix wrongly labelled cells.
+* Totals detection: Detect totalling cells automatically from the data.
+
 ## How to install
 
 You can install this library via pip using:
 ```pip install tablextract```
 
-## Usage
+## Usage example
 
 ```
 >>> from pprint import pprint
@@ -26,11 +38,21 @@ You can install this library via pip using:
 	{'Confederacy': 'Kubuna', 'Chief': 'Vacant'},
 	{'Confederacy': 'Tovata', 'Chief': 'Ratu Naiqama Tawake Lalabalavu'}
 ]
->>> ts[2].record
+>>> ts[2].record  # it automatically identifies that it's laid out vertically
 [
-	{'English': 'Hello/hi', 'Fijian': 'bula', 'Fiji Hindi': 'नमस्ते (namaste)'},
-	{'English': 'Good morning', 'Fijian': 'yadra (Pronounced Yandra)', 'Fiji Hindi': 'सुप्रभात (suprabhat)'},
-	{'English': 'Goodbye', 'Fijian': 'moce (Pronounced Mothe)', 'Fiji Hindi': 'अलविदा (alavidā)'}
+	{
+		'English': 'Hello/hi',
+		'Fijian': 'bula',
+		'Fiji Hindi': 'नमस्ते (namaste)'
+	}, {
+		'English': 'Good morning',
+		'Fijian': 'yadra (Pronounced Yandra)',
+		'Fiji Hindi': 'सुप्रभात (suprabhat)'
+	}, {
+		'English': 'Goodbye',
+		'Fijian': 'moce (Pronounced Mothe)',
+		'Fiji Hindi': 'अलविदा (alavidā)'
+	}
 ]
 
 ```
