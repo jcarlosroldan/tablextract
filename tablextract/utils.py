@@ -179,9 +179,7 @@ _find_dates_extractor = DateExtractor()
 def find_dates(text):
 	try:
 		res = _find_dates_extractor.extract(text, prefer_language_date_order=False, detect_relative_dates=False)
-		if len(res):
-			log('debug-dates', text)
-			return res[0].value
+		if len(res): return res[0].value
 	except:
 		log('info', f'ETK DateExtractor raised an error on value {text}. Using RegEx fallback instead.')
 
