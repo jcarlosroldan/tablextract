@@ -28,31 +28,31 @@ You can install this library via pip using:
 >>> ts = tables('https://en.wikipedia.org/wiki/Fiji')
 >>> ts
 [
-	Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[2]),
-	Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[3]),
-	Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[4])
+    Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[2]),
+    Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[3]),
+    Table(url=https://en.wikipedia.org/wiki/Fiji, xpath=.../div[4]/div[1]/table[4])
 ]
 >>> ts[0].record
 [
-	{'Confederacy': 'Burebasaga', 'Chief': 'Ro Teimumu Vuikaba Kepa'},
-	{'Confederacy': 'Kubuna', 'Chief': 'Vacant'},
-	{'Confederacy': 'Tovata', 'Chief': 'Ratu Naiqama Tawake Lalabalavu'}
+    {'Confederacy': 'Burebasaga', 'Chief': 'Ro Teimumu Vuikaba Kepa'},
+    {'Confederacy': 'Kubuna', 'Chief': 'Vacant'},
+    {'Confederacy': 'Tovata', 'Chief': 'Ratu Naiqama Tawake Lalabalavu'}
 ]
 >>> ts[2].record  # it automatically identifies that it's laid out vertically
 [
-	{
-		'English': 'Hello/hi',
-		'Fijian': 'bula',
-		'Fiji Hindi': 'नमस्ते (namaste)'
-	}, {
-		'English': 'Good morning',
-		'Fijian': 'yadra (Pronounced Yandra)',
-		'Fiji Hindi': 'सुप्रभात (suprabhat)'
-	}, {
-		'English': 'Goodbye',
-		'Fijian': 'moce (Pronounced Mothe)',
-		'Fiji Hindi': 'अलविदा (alavidā)'
-	}
+    {
+        'English': 'Hello/hi',
+        'Fijian': 'bula',
+        'Fiji Hindi': 'नमस्ते (namaste)'
+    }, {
+        'English': 'Good morning',
+        'Fijian': 'yadra (Pronounced Yandra)',
+        'Fiji Hindi': 'सुप्रभात (suprabhat)'
+    }, {
+        'English': 'Goodbye',
+        'Fijian': 'moce (Pronounced Mothe)',
+        'Fiji Hindi': 'अलविदा (alavidā)'
+    }
 ]
 
 ```
