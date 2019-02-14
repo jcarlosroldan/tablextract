@@ -35,7 +35,6 @@ from sys import stdout, maxsize, platform
 from time import strftime, sleep, time
 from traceback import format_exc
 from urllib.parse import urljoin
-from wikipediaapi import Wikipedia
 from xml.etree.cElementTree import iterparse
 
 # --- constants ---------------------------------------------------------------
