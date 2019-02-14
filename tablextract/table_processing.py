@@ -489,7 +489,6 @@ def function_correction(table):
 			orientation = detect_orientation_table_diff(table)
 		else:
 			orientation = detect_orientation_silhouette(table)
-		print(orientation)
 		header_rows = [0] if orientation in ['tab', 'row'] else []
 		header_cols = [0] if orientation in ['tab', 'col'] else []
 		half_width = table.cols() / 2
