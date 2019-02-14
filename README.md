@@ -57,11 +57,34 @@ You can install this library via pip using:
 
 ```
 
-Further information will be written soon.
+This library only have one function `tables`, that returns a list of `Table` objects.
+
+`tables(url, css_filter='table', xpath_filter=None, request_cache_time=None)`
+
+* `url: str`: URL of the site where tables should be downloaded from.
+* `css_filter: str`: When specified, only tables that match the selector will be returned.
+* `xpath_filter: str`: When specified, only tables that match the XPATH selector will be returned.
+* `request_cache_time: int`: When specified, downloaded documents will be cached for that number of seconds.
+
+Each `Table` object has the following properties:
+
+`# TODO`
+
 
 ## Changes
 
-### v1
+### v1.1.*
+
+Released on Feb 05, 2019.
+
+* Orientation is automatically detected to fix some table cell functions.
+* New features are extracted from the cells: POS tagging densities, relative column and row indices, first-char-type and last-char-type.
+* Hierarchical, factorised, and some periodical headers are segmented properly before the extraction.
+* Instead of discarding tables with tables inside and then discarding tables smaller than 2x2, it first removes the small tables and then discards tables with tables inside, in order to get more results.
+* Texts and images are extracted before discarding repeated cells, to avoid discarding rows with changing images.
+* Cache is disabled by default
+
+### v1.0.*
 
 Released on Jan 24, 2019.
 
@@ -72,7 +95,7 @@ Released on Jan 24, 2019.
 * Fixed project imports and setup
 * More readable Table objects
 
-### v0
+### v0.0.*
 
 Released on Jan 22, 2019.
 

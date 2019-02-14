@@ -4,3 +4,4 @@ nltk>=3.3
 requests>=2.18.4
 scikit-learn>=0.19.2
 selenium>=3.14.1
+wikipedia-api>=0.4.4

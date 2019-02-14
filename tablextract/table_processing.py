@@ -1,4 +1,7 @@
-from tablextract.utils import *
+try:
+	from utils import *
+except ModuleNotFoundError:
+	from tablextract.utils import *
 
 PADDING_CELL = soup('<td data-padding-cell></td>', 'html.parser').td
 FIND_DIGITS = compile(r"\d+").findall
@@ -9,20 +12,26 @@ CATEGORICAL_STYLE_PROPERTIES = ["text-align", "font-family", "text-transform", "
 NUMERIC_STYLE_PROPERTIES = {"border-bottom-width": (-40, 40), "border-left-width": (-40, 40), "border-right-width": (-40, 40), "border-top-width": (-40, 40), "font-size": (0, 60), "padding-bottom": (-40, 40), "padding-left": (-40, 40), "padding-right": (-40, 40), "padding-top": (-40, 40), "font-weight": (400, 700)}
 NUMERIC_STYLE_PROPERTIES = {k: (mn, mx - mn) for k, (mn, mx) in NUMERIC_STYLE_PROPERTIES.items()}
 COMPUTED_STYLE_PROPERTIES = ["tag", "relative-width", "relative-height"]
-DENSITY_SYNTAX_PROPERTIES = {"lowercase": r"\p{Ll}", "uppercase": r"\p{Lu}", "alphanumeric": r"\w", "digit": r"\d", "whitespace": r"\s", "symbol": r"[^\w\s]", "token": r"[^\s]+"}
-DENSITY_SYNTAX_PROPERTIES = {f'density-{k}': compile(v).findall for k, v in DENSITY_SYNTAX_PROPERTIES.items()}
+DENSITY_SYNTAX_PROPERTIES = {"lowercase": r"\p{Ll}", "uppercase": r"\p{Lu}", "alphanumeric": r"\w", "digit": r"\d", "whitespace": r"\s", "symbol": r"[^\w\s]"}
+SYNTAX_NTH_OF_TYPE_PROPERTIES = DENSITY_SYNTAX_PROPERTIES.copy()
+DENSITY_SYNTAX_PROPERTIES["token"] = r"[^\s]+"
+DENSITY_SYNTAX_PROPERTIES = {'density-%s' % k: compile(v).findall for k, v in DENSITY_SYNTAX_PROPERTIES.items()}
+SYNTAX_NTH_OF_TYPE_PROPERTIES = {k: compile(v).match for k, v in SYNTAX_NTH_OF_TYPE_PROPERTIES.items()}
 DENSITY_SYNTAX_PROPERTIES["density-stopwords"] = FIND_STOPWORDS
 BOOLEAN_SYNTAX_PROPERTIES = {"capitalised": r"(\p{Lu}(\p{Ll}+|\.)\s)*\p{Lu}(\p{Ll}+|\.)", "allcaps": r"\p{Lu}+", "money": r"[\$£]\s*\d+([.,] ?\d+)?\s*$|\d+([.,] ?\d+)?\s*€", "amount": r"([\-\+]\s*)?[\d ,\.]+", "range": r"((\+\-)?\s*\d[\d(,\s?)\.]*[\-\–(to),\s]*)+", "empty": r""}
-BOOLEAN_SYNTAX_PROPERTIES = {f'match-{k}': compile("^%s$" % v).match for k, v in BOOLEAN_SYNTAX_PROPERTIES.items()}
+BOOLEAN_SYNTAX_PROPERTIES = {'match-%s' % k: compile("^%s$" % v).match for k, v in BOOLEAN_SYNTAX_PROPERTIES.items()}
 BOOLEAN_SYNTAX_PROPERTIES["match-date"] = find_dates
 BOOLEAN_SYNTAX_PROPERTIES["match-location"] = lambda x: len([it for it in find_entities(x).items() if it[1] == 'GPE']) > 0
 BOOLEAN_SYNTAX_PROPERTIES["match-person"] = lambda x: len([it for it in find_entities(x).items() if it[1] == 'PERSON']) > 0
 PROPERTY_KINDS = {
 	'style': ['background-color-b', 'background-color-g', 'background-color-r', 'border-bottom-color-b', 'border-bottom-color-g', 'border-bottom-color-r', 'border-bottom-width', 'border-left-color-b', 'border-left-color-g', 'border-left-color-r', 'border-left-width', 'border-right-color-b', 'border-right-color-g', 'border-right-color-r', 'border-right-width', 'border-top-color-b', 'border-top-color-g', 'border-top-color-r', 'border-top-width', 'color-b', 'color-g', 'color-r', 'display', 'font-family', 'font-size', 'font-weight', 'outline-color-b', 'outline-color-g', 'outline-color-r', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'text-align', 'text-decoration', 'text-transform', 'vertical-align'],
-	'syntax': ['density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-location', 'match-money', 'match-person', 'match-range'],
-	'structural': ['children', 'colspan', 'rowspan', 'tag']
+	'syntax': ['density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-location', 'match-money', 'match-person', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
+	'structural': ['children', 'colspan', 'rowspan', 'tag', 'relative-col', 'relative-row'],
+	'semantic': ['density-postag-%s' % tc for tc in POS_TAG_CATEGORIES]
 }
 PROPERTY_KINDS = {k: v + ['%s-variability-%s' % (dim, feat) for feat in v for dim in ['row', 'col', 'tab']] for k, v in PROPERTY_KINDS.items()}
+STANDARD_SCALER = StandardScaler()
+ORIENTATIONS = ('row', 'col', 'tab')
 MAX_SPAN = 150
 
 class Table:
@@ -82,14 +91,14 @@ def segmentate(table):
 	elements, context = clean_table(elements)
 	features = []
 	texts = []
-	for row in elements:
+	for r, row in enumerate(elements):
 		row_data = []
 		row_text = []
-		for cell in row:
+		for c, cell in enumerate(row):
 			if 'data-padding-cell' in cell.attrs:
 				cell_feats = {}
 			else:
-				cell_feats = extract_features(cell, len(elements), len(elements[0]))
+				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c)
 			row_data.append(cell_feats)
 			row_text.append(extract_text(cell))
 		features.append(row_data)
@@ -201,7 +210,7 @@ def clean_table(table):
 			context[('c', k, nv)] = vv
 	return table, context
 
-def extract_features(element, rows, cols):
+def extract_features(element, rows, cols, row_index=None, col_index=None):
 	if 'data-computed-style' not in element.attrs:
 		return None
 	css_properties = [prop.split(':') for prop in element['data-computed-style'].split('|')]
@@ -230,6 +239,13 @@ def extract_features(element, rows, cols):
 			res[p] = 0
 	for p, reg in BOOLEAN_SYNTAX_PROPERTIES.items():
 		res[p] = 1 if reg(text) else 0
+	res['length'] = min(ln / 8, 1)
+	for p, reg in SYNTAX_NTH_OF_TYPE_PROPERTIES.items():
+		res['first-char-%s' % p] = 1 if len(text) and reg(text[0]) else 0
+		res['last-char-%s' % p] = 1 if len(text) and reg(text[-1]) else 0
+	# compute semantic properties
+	for k, v in lexical_densities(text).items():
+		res['density-postag-%s' % k] = v
 	# add children render info
 	area = res['width'] * res['height']
 	nodes = []
@@ -245,9 +261,11 @@ def extract_features(element, rows, cols):
 	res = vectors_weighted_average(nodes)
 	res['tag'] = element.name
 	res['children'] = max(0, min(1, len(element.find_all()) / 5))
-	if res['tag'] in ['th', 'td']:
+	if row_index != None:
 		res['colspan'] = max(0, min(1, int(css_properties['colspan']) / cols))
 		res['rowspan'] = max(0, min(1, int(css_properties['rowspan']) / rows))
+		res['relative-row'] = row_index / rows
+		res['relative-col'] = col_index / cols
 		del res['width']
 		del res['height']
 	return res
@@ -264,8 +282,6 @@ def extract_text(element, add_image_text=True):
 				res.append('(%s)' % desc['title'])
 			elif desc.has_attr('src') and len(desc['src']):
 				res.append('(%s)' % desc['src'].rsplit('/')[-1].split('.')[0])
-			else:
-				print(desc)
 	return ' '.join([r.strip() for r in res]).strip()
 
 def place_context(table):
@@ -318,21 +334,28 @@ def place_context(table):
 
 def add_variability(table):
 	if len(table.features) == 0:
-		table.variabilities = {'row': 0, 'col': 0, 'table': 0}
+		table.variabilities = {}
+		for orientation in ORIENTATIONS:
+			table.variabilities[orientation] = 0
+			for feature_type in PROPERTY_KINDS:
+				table.variabilities[(orientation, feature_type)] = 0
 		return
 	xpath_getter = lambda x: x[1]['data-xpath'] if 'data-xpath' in x[1].attrs else ''
-	row_features = [
-		vectors_average([c_ft for c_ft, c_el in distinct(zip(r_ft, r_el), xpath_getter)])
+	row_averages = [
+		vectors_average(c_ft for c_ft, c_el in distinct(
+			zip(r_ft, r_el),
+			xpath_getter
+		))
 		for r_ft, r_el in zip(table.features, table.elements)
 	]
-	col_features = [
+	col_averages = [
 		vectors_average(c_ft for c_ft, c_el in distinct(
 			[(r_ft[c], r_el[c]) for r_ft, r_el in zip(table.features, table.elements)],
 			xpath_getter
 		))
 		for c in range(table.cols())
 	]
-	tab_features = vectors_average(
+	tab_average = vectors_average(
 		c_ft for c_ft, c_el in distinct(
 			[
 				(c_ft, c_el)
@@ -343,44 +366,35 @@ def add_variability(table):
 		)
 	)
 
-	total_row_variability = []
-	total_col_variability = []
-	total_table_variability = []
-	total_style_row_variability = []
-	total_style_col_variability = []
-	total_style_table_variability = []
-	total_syntax_row_variability = []
-	total_syntax_col_variability = []
-	total_syntax_table_variability = []
+	total_variability = {}
+	for orientation in ORIENTATIONS:
+		total_variability[orientation] = []
+		for feature_type in PROPERTY_KINDS:
+			total_variability[(orientation, feature_type)] = []
 
-	for r, row in enumerate(table.features):
-		for c, cell in enumerate(row):
-			if len(cell) == 0: continue
-			row_variabilities = vectors_difference(cell, row_features[r], prefix='row-variability-')
-			col_variabilities = vectors_difference(cell, col_features[c], prefix='col-variability-')
-			table_variabilities = vectors_difference(cell, tab_features, prefix='tab-variability-')
-			table.features[r][c] = {**cell, **row_variabilities, **col_variabilities, **table_variabilities}
-			total_row_variability.append(vector_module(row_variabilities))
-			total_col_variability.append(vector_module(col_variabilities))
-			total_table_variability.append(vector_module(table_variabilities))
-			total_style_row_variability.append(vector_module({k: v for k, v in row_variabilities.items() if k in PROPERTY_KINDS['style']}))
-			total_style_col_variability.append(vector_module({k: v for k, v in col_variabilities.items() if k in PROPERTY_KINDS['style']}))
-			total_style_table_variability.append(vector_module({k: v for k, v in table_variabilities.items() if k in PROPERTY_KINDS['style']}))
-			total_syntax_row_variability.append(vector_module({k: v for k, v in row_variabilities.items() if k in PROPERTY_KINDS['syntax']}))
-			total_syntax_col_variability.append(vector_module({k: v for k, v in col_variabilities.items() if k in PROPERTY_KINDS['syntax']}))
-			total_syntax_table_variability.append(vector_module({k: v for k, v in table_variabilities.items() if k in PROPERTY_KINDS['syntax']}))
+		for r, row in enumerate(table.features):
+			for c, cell in enumerate(row):
+				if len(cell) == 0: continue
+				if orientation == 'row':
+					feats = row_averages[r]
+				elif orientation == 'col':
+					feats = col_averages[c]
+				else:
+					feats = tab_average
+				variabilities = vectors_difference(feats, cell, prefix='%s-variability-' % orientation)
+				table.features[r][c] = {**table.features[r][c], **variabilities}
+				total_variability[orientation].append(vector_module(variabilities))
 
-	table.variabilities = {
-		'row': sum(total_row_variability) / len(total_row_variability),
-		'col': sum(total_col_variability) / len(total_col_variability),
-		'table': sum(total_table_variability) / len(total_table_variability),
-		'style-row': sum(total_style_row_variability) / len(total_style_row_variability),
-		'style-col': sum(total_style_col_variability) / len(total_style_col_variability),
-		'style-table': sum(total_style_table_variability) / len(total_style_table_variability),
-		'syntax-row': sum(total_syntax_row_variability) / len(total_syntax_row_variability),
-		'syntax-col': sum(total_syntax_col_variability) / len(total_syntax_col_variability),
-		'syntax-table': sum(total_syntax_table_variability) / len(total_syntax_table_variability)
-	}
+				for feature_type, features in PROPERTY_KINDS.items():
+					total_variability[(orientation, feature_type)].append(vector_module({k: v for k, v in variabilities.items() if k in PROPERTY_KINDS[feature_type]}))
+	table.variabilities = {k: sum(v) / len(v) for k, v in total_variability.items()}
+
+	# normalise the variabilities
+	for feature_type in PROPERTY_KINDS:
+		ft_sum = sum(table.variabilities[(o, feature_type)] for o in ORIENTATIONS)
+		if ft_sum > 0:
+			for orientation in ORIENTATIONS:
+				table.variabilities[(orientation, feature_type)] /= ft_sum
 
 def functional_analysis(table):
 	# ensure variables are normalised
@@ -413,20 +427,21 @@ def functional_analysis(table):
 				functions[r][c] = cell_function
 
 	table.functions = functions
+	function_correction(table)
 
 def cluster_vector_table(vector_table, xpath_table):
 	# get cluster values
 	rows, cols = len(xpath_table), len(xpath_table[0])
 	features = binarize_categorical(vector_table)
-	cells = {
-		xp: [f[1] for f in sorted(ft.items())]
+	cells = [
+		(xp, [f[1] for f in sorted(ft.items())])
 		for r_ft, r_xp in zip(features, xpath_table)
 		for ft, xp in zip(r_ft, r_xp)
 		if len(ft)
-	}
-	cells = list(cells.items())
-	km = KMeans(n_clusters=2).fit([c[1] for c in cells])
-	cells = {xpath: int(lab) for (xpath, _), lab in zip(cells, km.labels_)}
+	]
+	#cells = STANDARD_SCALER.fit_transform([c[1] for c in cells])
+	clust = KMeans(n_clusters=2).fit([c[1] for c in cells])
+	cells = {xpath: int(lab) for (xpath, _), lab in zip(cells, clust.labels_)}
 	functions = []
 	for r in range(rows):
 		functions.append([])
@@ -466,14 +481,84 @@ def cluster_vector_table(vector_table, xpath_table):
 		exchange_dict = {-1: -1, 0: 1, 1: 0}
 		functions = [[exchange_dict[c] for c in row] for row in functions]
 	confidence = abs(header_likelyhood[0] - header_likelyhood[1])
-	# XXX class correction
 	return functions, confidence
+
+def function_correction(table):
+	if sum(c for row in table.functions for c in row):  # if there are headers (no enumeration), fix them
+		if table.cols() == 2 or table.rows() == 2:
+			orientation = detect_orientation_table_diff(table)
+		else:
+			orientation = detect_orientation_silhouette(table)
+		print(orientation)
+		header_rows = [0] if orientation in ['tab', 'row'] else []
+		header_cols = [0] if orientation in ['tab', 'col'] else []
+		half_width = table.cols() / 2
+		half_height = table.rows() / 2
+		if orientation != 'col':
+			for row in range(1, table.rows()):
+				if sum(table.functions[row]) > half_width:
+					header_rows.append(row)
+		if orientation != 'row':
+			for col in range(1, table.cols()):
+				if sum(table.functions[r][col] for r in range(table.rows())) > half_height:
+					header_cols.append(col)
+		table.functions = [[1 if col in header_cols or row in header_rows else 0 for col in range(table.cols())] for row in range(table.rows())]
+
+def detect_orientation_weights(table):
+	max_weight = None
+	max_orientation = None
+	for orientation in ORIENTATIONS:
+		weight = table.variabilities[(orientation, 'syntax')] + table.variabilities[(orientation, 'style')] + table.variabilities[(orientation, 'semantic')] + table.variabilities[(orientation, 'structural')]
+		if max_weight == None or weight > max_weight:
+			max_weight = weight
+			max_orientation = orientation
+	return orientation
+
+def detect_orientation_silhouette(table):
+	labels = [[], [], []]
+	features = []
+	keys = None
+	for r, row in enumerate(binarize_categorical(table.features)):
+		for c, cell in enumerate(row):
+			if len(cell):
+				if keys == None: keys = [k for k in cell.keys()]
+				features.append([cell[k] for k in keys])
+				labels[0].append(1 if r == 0 else 0)  # horizontal listing
+				labels[1].append(1 if c == 0 else 0)  # vertical listing
+				labels[2].append(0 if r == c == 0 else (1 if r == 0 else (2 if c == 0 else 3)))  # matrix
+	res = [silhouette_score(features, ls) for ls in labels]
+	return ORIENTATIONS[res.index(max(res))]
+
+def detect_orientation_table_diff(table):
+	groups = [
+		[table.features[0][0]],  # first cell
+		table.features[0][1:],  # first row
+		[r[0] for r in table.features[1:]],  # first col
+		[c for r in table.features[1:] for c in r[1:]]  # rest
+	]
+	groups = [vectors_average(cells) for cells in groups]
+	d01 = vector_module(vectors_difference(groups[0], groups[1]))
+	d02 = vector_module(vectors_difference(groups[0], groups[2]))
+	d13 = vector_module(vectors_difference(groups[1], groups[3]))
+	d23 = vector_module(vectors_difference(groups[2], groups[3]))
+	res = [
+		d02 + d13 - d01 - d23,
+		d01 + d23 - d02 - d13,
+		d23 + d13 - d01 - d02
+	]
+	return ORIENTATIONS[res.index(max(res))]
+
+def detect_orientation(table):
+	if table.cols() == 2 or table.rows() == 2:
+		return detect_orientation_table_diff(table)
+	else:
+		return detect_orientation_silhouette(table)
 
 def structural_analysis(table):
 	# TODO double headers
 	merge_headers(table)
 	# TODO split headers
-	rv, cv, tv = table.variabilities['row'], table.variabilities['col'], table.variabilities['table']
+	rv, cv, tv = (table.variabilities[o] for o in ORIENTATIONS)
 	all_headers = all(c == 1 for row in table.functions for c in row if c != -1)
 	all_data = all(c == 0 for row in table.functions for c in row if c != -1)
 	first_row_header = all(c == 1 for c in table.functions[0] if c != -1)
@@ -536,11 +621,11 @@ def compute_score(table):
 		elif table.kind == 'matrix':
 			header_area = table.features[0] + [row[0] for row in table.features]
 			data_area = [cell for row in table.functions[1:] for cell in row[1:]]
-			if max_var != table.variabilities['table']: variability_score = .75
+			if max_var != table.variabilities['tab']: variability_score = .75
 		elif table.kind == 'enumeration':
 			header_area = []
 			data_area = [cell for row in table.functions for cell in row]
-			if max_var != table.variabilities['table']: variability_score = .75
+			if max_var != table.variabilities['tab']: variability_score = .75
 		if len(header_area):
 			numeric_header_score = [cell['density-digit'] for cell in header_area if len(cell)]
 			numeric_header_score = 1 - sum(numeric_header_score) / len(numeric_header_score)

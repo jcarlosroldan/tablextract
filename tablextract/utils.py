@@ -11,20 +11,26 @@ except OSError:
 	from etk.extractors.date_extractor import DateExtractor
 from etk.extractors.spacy_ner_extractor import SpacyNerExtractor
 from math import sqrt
-from nltk import download as nltk_download
+from numpy import array as ndarray
+from nltk import download as nltk_download, pos_tag, word_tokenize
 from nltk.corpus import stopwords
 try:
-	stopwords.words("english")
+	stopwords.words('english')
+	pos_tag(word_tokenize('check'))
 except:
 	nltk_download('stopwords')
+	nltk_download('punkt')
+	nltk_download('averaged_perceptron_tagger')
 from os import makedirs, remove, chmod
 from os.path import dirname, abspath, exists, join
 from pickle import load as pload, dump as pdump
-from regex import findall, sub, compile, DOTALL
+from regex import findall, sub, compile, DOTALL, match
 from requests import get
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans, SpectralClustering
+from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
 from sys import stdout, maxsize, platform
 from time import strftime, sleep, time
 from traceback import format_exc
@@ -39,6 +45,7 @@ PATH_LOG = join(PATH_RESOURCES, 'log_%s.txt')
 
 PATTERN_LOG = '[%s] %s\n'
 FUNCTIONS = {-1: 'empty', 0: 'data', 1: 'metadata', 2: 'context', 3: 'decorator', 4: 'total', 5: 'indexer', 6: 'factorised'}
+POS_TAG_CATEGORIES = ('J', 'N', 'R', 'V', 'other')
 
 URL_GECKODRIVER = 'https://github.com/mozilla/geckodriver/releases'
 
@@ -125,8 +132,9 @@ def vectors_weighted_average(vectors):
 
 def vectors_difference(v1, v2, prefix=''):
 	''' Given two mixed feature vectors, return another vector with the
-	differences amongst them. For numerical features, absolute value difference
-	is computed. For categorical features, Gower distance is used. '''
+	differences amongst them, taking the features of the first vector. For
+	numerical features, absolute value difference is computed. For categorical
+	features, Gower distance is used. '''
 	res = {}
 	for feat in v1:
 		if type(v1[feat]) == str:
@@ -190,6 +198,17 @@ def find_entities(text):
 	except:
 		log('info', f'ETK SpacyNerExtractor raised an error on value {text}.')
 		return {}
+
+def lexical_densities(text, categories=POS_TAG_CATEGORIES):
+	cats = [cat[0] for word, cat in pos_tag(word_tokenize(text))]
+	C = len(cats)
+	res = {cat: 0 for cat in categories}
+	for cat in cats:
+		if cat in res:
+			res[cat] += 1
+		else:
+			res['other'] += 1
+	return {k: v / C for k, v in res.items()}
 
 # --- log ---------------------------------------------------------------------
 
@@ -296,7 +315,7 @@ def find_driver_path():
 				with tf.extractfile('geckodriver') as gd, open(driver_path, 'wb') as f:
 					f.write(gd.read())
 		remove(compressed_path)
-		chmod(driver_path, 755)
+		chmod(driver_path, 777)
 	return driver_path, null_path
 
 def close_driver():
@@ -314,3 +333,6 @@ def get_with_render(url, render_selector='table', headless=True, disable_images=
 	driver.execute_script(SCRIPT_ADD_RENDER, render_selector)
 	sleep(.5)
 	return driver.page_source
+
+if __name__ == '__main__':
+	print(lexical_densities('The cat jumped over the window'))
