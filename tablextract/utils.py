@@ -314,7 +314,7 @@ def find_driver_path():
 				with tf.extractfile('geckodriver') as gd, open(driver_path, 'wb') as f:
 					f.write(gd.read())
 		remove(compressed_path)
-		chmod(driver_path, 777)
+		chmod(driver_path, 755)
 	return driver_path, null_path
 
 def close_driver():
