@@ -332,6 +332,3 @@ def get_with_render(url, render_selector='table', headless=True, disable_images=
 	driver.execute_script(SCRIPT_ADD_RENDER, render_selector)
 	sleep(.5)
 	return driver.page_source
-
-if __name__ == '__main__':
-	print(lexical_densities('The cat jumped over the window'))

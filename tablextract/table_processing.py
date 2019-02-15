@@ -47,7 +47,7 @@ class Table:
 		self.variabilities = {'row': None, 'col': None, 'table': None}
 		self.kind = 'unknown'
 		self.record = None
-		self.score = None
+		self.score = 0
 		self.error = None
 
 	def rows(self):
@@ -287,7 +287,7 @@ def extract_text(element, add_image_text=True):
 def place_context(table):
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
-		(k[1], k[2], extract_features(v, rows, cols), v)
+		(k[1], k[2], extract_features(v, rows, cols, k[1], 0), v)
 		for k, v in table.context.items() if k[0] == 'r')
 	)
 	top_rows = [row for row in context_rows if row[0] == 0]
