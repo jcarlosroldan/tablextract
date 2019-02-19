@@ -21,7 +21,7 @@ You can install this library via pip using:
 
 ## Usage example
 
-```
+```python
 >>> from pprint import pprint
 >>> from tablextract import tables
 >>>
