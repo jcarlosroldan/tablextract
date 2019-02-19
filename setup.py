@@ -8,10 +8,10 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
 	name='tablextract',
-	version='1.1.8',
+	version='1.1.9',
 	author='Juan C. Roldán',
 	author_email='juancarlos@sevilla.es',
-	description='Extract the information represented in any HTML table',
+	description='Extract the information represented in any HTML table as database-like records',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
 	install_requires=requirements,

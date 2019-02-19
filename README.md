@@ -54,7 +54,6 @@ You can install this library via pip using:
         'Fiji Hindi': 'अलविदा (alavidā)'
     }
 ]
-
 ```
 
 This library only have one function `tables`, that returns a list of `Table` objects.
@@ -66,14 +65,28 @@ This library only have one function `tables`, that returns a list of `Table` obj
 * `xpath_filter: str`: When specified, only tables that match the XPATH selector will be returned.
 * `request_cache_time: int`: When specified, downloaded documents will be cached for that number of seconds.
 
-Each `Table` object has the following properties:
+Each `Table` object has the following properties and methods:
 
-`# TODO`
+* `cols(): int`: Number of columns of the table.
+* `rows(): int`: Number of rows of the table.
+* `cells(): int`: Number of cells of the table (same as `table.cols() * table.rows()`).
 
+* `error: str or None`: If an error has occurred during table extraction, it contains the stacktrace of it. Otherwise, it is None.
+* `url: str`: URL of the page from where the table was extracted.
+* `xpath: str`: XPath of the table within the page.
+* `element: bs4.element.Tag`: BeautifulSoup element that represents the table.
+* `elements: list of list of bs4.element.Tag`: 2D table of BeautifulSoup elements that represents the table after cell segmentation.
+* `texts: list of list of str`: 2D table of strings that represents the text of each cell.
+* `context: dict of {tuple, str}`: Texts inside or outside the table that provides contextual information for it. The keys of the dictionary represents the context position.
+* `features: list of list of dict of {str, float/str}`: 2D table of feature vectors for each cell in the table.
+* `functions: list of list of int`: 2D table of functions of the cells of the table. Functions can be EMPTY (-1), DATA (0), or METADATA(1).
+* `kind: str`: Type of table extracted. Types can be 'horizontal listing', 'vertical listing', 'matrix', 'enumeration' or 'unknown'.
+* `record: list of dict of {str, str}`: Database-like records extracted from the table.
+* `score: float`: Estimation of how properly the table was extracted, between 0 and 1, being 1 a perfect extraction.
 
 ## Changes
 
-### v1.1.*
+### v1.1
 
 Released on Feb 05, 2019.
 
@@ -83,8 +96,9 @@ Released on Feb 05, 2019.
 * Instead of discarding tables with tables inside and then discarding tables smaller than 2x2, it first removes the small tables and then discards tables with tables inside, in order to get more results.
 * Texts and images are extracted before discarding repeated cells, to avoid discarding rows with changing images.
 * Cache is disabled by default
+* Readme documentation improved.
 
-### v1.0.*
+### v1.0
 
 Released on Jan 24, 2019.
 
@@ -95,7 +109,7 @@ Released on Jan 24, 2019.
 * Fixed project imports and setup
 * More readable Table objects
 
-### v0.0.*
+### v0.0.
 
 Released on Jan 22, 2019.
 
