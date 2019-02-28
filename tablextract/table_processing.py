@@ -1,7 +1,4 @@
-try:
-	from utils import *
-except ModuleNotFoundError:
-	from tablextract.utils import *
+from tablextract.utils import *
 
 PADDING_CELL = soup('<td data-padding-cell></td>', 'html.parser').td
 FIND_DIGITS = compile(r"\d+").findall
