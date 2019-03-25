@@ -86,6 +86,17 @@ Each `Table` object has the following properties and methods:
 
 ## Changes
 
+### v1.2
+
+Released on Mar 25, 2019.
+
+* Named entity detection is not performed during feature extraction stage.
+* Table cleaning bug: tables with last row empty are not extracted.
+* Removed Wikipedia-specific selector constraint
+* The previous and next non-inline tags with text relative to the table is extracted as context.
+* The hierarchy of header tags h1-h6 is extracted as context.
+* More tables are extracted on the location stage.
+
 ### v1.1
 
 Released on Feb 05, 2019.

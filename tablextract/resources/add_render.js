@@ -1,5 +1,5 @@
 function pathTo(element) {
-	if (element === document) return ""
+	if (element === document) return ''
 	var ix = 0
 	var siblings = element.parentNode.childNodes
 	for (var i = 0; i < siblings.length; i++) {
@@ -11,22 +11,22 @@ function pathTo(element) {
 var removeElements = []
 function addRender(subtree) {
 	var style = getComputedStyle(subtree)
-	if (subtree.tagName == "TR" && subtree.children.length == 0 || subtree.offsetWidth == undefined || style["display"] == "none" || subtree.tagName == "SUP" && subtree.className == "reference") {
+	if (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {
 		removeElements.push(subtree)
 		return
 	}
-	var serialStyle = ""
+	var serialStyle = ''
 	for (let prop of style) {
-		if (prop[0] != "-") {
-			serialStyle += prop + ":" + style[prop].replace(/:/g, "") + "|"
+		if (prop[0] != '-') {
+			serialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'
 		}
 	}
-	serialStyle += "width:" + subtree.offsetWidth / document.body.offsetWidth + "|height:" + subtree.offsetHeight / document.body.offsetHeight
-	if (subtree.tagName == "TD" || subtree.tagName == "TH") {
-		serialStyle += "|colspan:" + subtree.colSpan + "|rowspan:" + subtree.rowSpan
+	serialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight
+	if (subtree.tagName == 'TD' || subtree.tagName == 'TH') {
+		serialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan
 	}
-	subtree.setAttribute("data-computed-style", serialStyle)
-	subtree.setAttribute("data-xpath", pathTo(subtree).toLowerCase())
+	subtree.setAttribute('data-computed-style', serialStyle)
+	subtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())
 	for (let child of subtree.children) addRender(child)
 }
 

@@ -1,7 +1,7 @@
 from tablextract.utils import *
 from tablextract.table_processing import *
 
-def tables(url, css_filter='table', xpath_filter=None, request_cache_time=30 * 24 * 3600):
+def tables(url, css_filter='table', xpath_filter=None, request_cache_time=0):
 	document = cache(get_with_render, (url, css_filter), identifier=url, cache_life=request_cache_time)
 	document = soup(document, 'html.parser')
 	res = []

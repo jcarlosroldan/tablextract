@@ -1,35 +1,33 @@
 from tablextract.utils import *
 
 PADDING_CELL = soup('<td data-padding-cell></td>', 'html.parser').td
-FIND_DIGITS = compile(r"\d+").findall
-STOPWORDS = stopwords.words("english")
-FIND_STOPWORDS = lambda txt: [w for w in findall(r"[^\s]+", txt.lower()) if w in STOPWORDS]
-COLOR_STYLE_PROPERTIES = ["color", "background-color", "border-left-color", "border-bottom-color", "border-right-color", "border-top-color", "outline-color"]
-CATEGORICAL_STYLE_PROPERTIES = ["text-align", "font-family", "text-transform", "text-decoration", "vertical-align", "display", "tag"]
-NUMERIC_STYLE_PROPERTIES = {"border-bottom-width": (-40, 40), "border-left-width": (-40, 40), "border-right-width": (-40, 40), "border-top-width": (-40, 40), "font-size": (0, 60), "padding-bottom": (-40, 40), "padding-left": (-40, 40), "padding-right": (-40, 40), "padding-top": (-40, 40), "font-weight": (400, 700)}
+FIND_DIGITS = compile(r'\d+').findall
+STOPWORDS = stopwords.words('english')
+FIND_STOPWORDS = lambda txt: [w for w in findall(r'[^\s]+', txt.lower()) if w in STOPWORDS]
+COLOR_STYLE_PROPERTIES = ['color', 'background-color', 'border-left-color', 'border-bottom-color', 'border-right-color', 'border-top-color', 'outline-color']
+CATEGORICAL_STYLE_PROPERTIES = ['text-align', 'font-family', 'text-transform', 'text-decoration', 'vertical-align', 'display', 'tag']
+NUMERIC_STYLE_PROPERTIES = {'border-bottom-width': (-40, 40), 'border-left-width': (-40, 40), 'border-right-width': (-40, 40), 'border-top-width': (-40, 40), 'font-size': (0, 60), 'padding-bottom': (-40, 40), 'padding-left': (-40, 40), 'padding-right': (-40, 40), 'padding-top': (-40, 40), 'font-weight': (400, 700)}
 NUMERIC_STYLE_PROPERTIES = {k: (mn, mx - mn) for k, (mn, mx) in NUMERIC_STYLE_PROPERTIES.items()}
-COMPUTED_STYLE_PROPERTIES = ["tag", "relative-width", "relative-height"]
-DENSITY_SYNTAX_PROPERTIES = {"lowercase": r"\p{Ll}", "uppercase": r"\p{Lu}", "alphanumeric": r"\w", "digit": r"\d", "whitespace": r"\s", "symbol": r"[^\w\s]"}
+COMPUTED_STYLE_PROPERTIES = ['tag', 'relative-width', 'relative-height']
+DENSITY_SYNTAX_PROPERTIES = {'lowercase': r'\p{Ll}', 'uppercase': r'\p{Lu}', 'alphanumeric': r'\w', 'digit': r'\d', 'whitespace': r'\s', 'symbol': r'[^\w\s]'}
 SYNTAX_NTH_OF_TYPE_PROPERTIES = DENSITY_SYNTAX_PROPERTIES.copy()
-DENSITY_SYNTAX_PROPERTIES["token"] = r"[^\s]+"
+DENSITY_SYNTAX_PROPERTIES['token'] = r'[^\s]+'
 DENSITY_SYNTAX_PROPERTIES = {'density-%s' % k: compile(v).findall for k, v in DENSITY_SYNTAX_PROPERTIES.items()}
 SYNTAX_NTH_OF_TYPE_PROPERTIES = {k: compile(v).match for k, v in SYNTAX_NTH_OF_TYPE_PROPERTIES.items()}
-DENSITY_SYNTAX_PROPERTIES["density-stopwords"] = FIND_STOPWORDS
-BOOLEAN_SYNTAX_PROPERTIES = {"capitalised": r"(\p{Lu}(\p{Ll}+|\.)\s)*\p{Lu}(\p{Ll}+|\.)", "allcaps": r"\p{Lu}+", "money": r"[\$£]\s*\d+([.,] ?\d+)?\s*$|\d+([.,] ?\d+)?\s*€", "amount": r"([\-\+]\s*)?[\d ,\.]+", "range": r"((\+\-)?\s*\d[\d(,\s?)\.]*[\-\–(to),\s]*)+", "empty": r""}
-BOOLEAN_SYNTAX_PROPERTIES = {'match-%s' % k: compile("^%s$" % v).match for k, v in BOOLEAN_SYNTAX_PROPERTIES.items()}
-BOOLEAN_SYNTAX_PROPERTIES["match-date"] = find_dates
-BOOLEAN_SYNTAX_PROPERTIES["match-location"] = lambda x: len([it for it in find_entities(x).items() if it[1] == 'GPE']) > 0
-BOOLEAN_SYNTAX_PROPERTIES["match-person"] = lambda x: len([it for it in find_entities(x).items() if it[1] == 'PERSON']) > 0
+DENSITY_SYNTAX_PROPERTIES['density-stopwords'] = FIND_STOPWORDS
+BOOLEAN_SYNTAX_PROPERTIES = {'capitalised': r'(\p{Lu}(\p{Ll}+|\.)\s)*\p{Lu}(\p{Ll}+|\.)', 'allcaps': r'\p{Lu}+', 'money': r'[\$£]\s*\d+([.,] ?\d+)?\s*$|\d+([.,] ?\d+)?\s*€', 'amount': r'([\-\+]\s*)?[\d ,\.]+', 'range': r'((\+\-)?\s*\d[\d(,\s?)\.]*[\-\–(to),\s]*)+', 'empty': r''}
+BOOLEAN_SYNTAX_PROPERTIES = {'match-%s' % k: compile('^%s$' % v).match for k, v in BOOLEAN_SYNTAX_PROPERTIES.items()}
+BOOLEAN_SYNTAX_PROPERTIES['match-date'] = find_dates
 PROPERTY_KINDS = {
 	'style': ['background-color-b', 'background-color-g', 'background-color-r', 'border-bottom-color-b', 'border-bottom-color-g', 'border-bottom-color-r', 'border-bottom-width', 'border-left-color-b', 'border-left-color-g', 'border-left-color-r', 'border-left-width', 'border-right-color-b', 'border-right-color-g', 'border-right-color-r', 'border-right-width', 'border-top-color-b', 'border-top-color-g', 'border-top-color-r', 'border-top-width', 'color-b', 'color-g', 'color-r', 'display', 'font-family', 'font-size', 'font-weight', 'outline-color-b', 'outline-color-g', 'outline-color-r', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'text-align', 'text-decoration', 'text-transform', 'vertical-align'],
-	'syntax': ['density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-location', 'match-money', 'match-person', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
+	'syntax': ['density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-money', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
 	'structural': ['children', 'colspan', 'rowspan', 'tag', 'relative-col', 'relative-row'],
 	'semantic': ['density-postag-%s' % tc for tc in POS_TAG_CATEGORIES]
 }
 PROPERTY_KINDS = {k: v + ['%s-variability-%s' % (dim, feat) for feat in v for dim in ['row', 'col', 'tab']] for k, v in PROPERTY_KINDS.items()}
 STANDARD_SCALER = StandardScaler()
 ORIENTATIONS = ('row', 'col', 'tab')
-MAX_SPAN = 150
+MAX_SPAN = 200
 
 class Table:
 	def __init__(self, url=None, xpath=None, element=None):
@@ -71,17 +69,12 @@ class Table:
 		return res
 
 def locate(url, document):
-	res = []
-	if document.select_one('.noarticletext') != None:
-		log('info', f'Article {url} does not exist.')
-	else:
-		for table in document.select('table[data-xpath]'):
-			child_tables = len(table.select('table'))
-			rows = len(table.select('tr'))
-			cols = len(table.select('td')) / rows if rows > 0 else 0
-			if rows > 1 and cols > 1 and not child_tables:
-				res.append(Table(url, table['data-xpath'], table))
-	return res
+	for table in document.select('table[data-xpath]'):
+		if len(table.select('tr')) < 2 or len(table.select('td')) < 4:
+			table.decompose()
+	for table in document.select('table[data-xpath]'):
+		if not len(table.select('table')):
+			yield Table(url, table['data-xpath'], table)
 
 def segmentate(table):
 	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]
@@ -109,7 +102,7 @@ def segmentate(table):
 		add_variability(table)
 
 def clean_table(table):
-	# convert colspans to int and avoid huge span
+	# convert spans to ints and avoid huge spans
 	for r, row in enumerate(table):
 		for c, cell in enumerate(row):
 			if 'colspan' in cell.attrs:
@@ -182,7 +175,7 @@ def clean_table(table):
 		while c < len(table[0]):
 			col = [row[c] for row in table]
 			col_text = [cell.text.strip() for cell in col]
-			all_empty = not any(len(cell) for cell in row_text)
+			all_empty = all(len(cell) == 0 for cell in col_text)
 			all_padding = all('colspan' in cell.attrs and cell['colspan'] > 1 or cell == PADDING_CELL for cell in col)
 			is_repeated = col_text in seen_before
 			seen_before.append(col_text)
@@ -328,6 +321,28 @@ def place_context(table):
 					table.elements[r].append(PADDING_CELL)
 					table.texts[r].append('')
 	table.context = {'_'.join(map(str, k)): extract_text(v) for k, v in table.context.items()}
+	# add header tags as context
+	header_tags = [table.element.find_previous('h%d' % n) for n in range(1, 7)]
+	for n, hn in enumerate(header_tags, 1):
+		if hn != None:
+			table.context['h_%d' % n] = hn.text.strip()
+	# add previous and next texts as context
+	try:
+		text_before = next(
+			t for t in table.element.find_all_previous()
+			if len(t.text.strip()) and t.name not in INLINE_TAGS
+		)
+		table.context['text_before'] = text_before.text.strip()
+	except StopIteration:
+		table.context['text_before'] = ''
+	try:
+		text_after = next(
+			t for t in table.element.find_all_next()
+			if len(t.text.strip()) and t.name not in INLINE_TAGS
+		)
+		table.context['text_after'] = text_after.text.strip()
+	except StopIteration:
+		table.context['text_after'] = ''
 
 def add_variability(table):
 	if len(table.features) == 0:
@@ -587,7 +602,7 @@ def merge_headers(table):
 def interpret(table):
 	if table.kind == 'enumeration' or table.kind == 'unknown':
 		res = [{'attribute_0': text} for row in table.texts for text in row if len(text)]
-	elif table.kind == "matrix":
+	elif table.kind == 'matrix':
 		res = [
 			{table.texts[0][0]: table.texts[r][0], 'attribute_0': table.texts[0][c], 'attribute_1': table.texts[r][c]}
 			for r, row in enumerate(table.functions) for c, cell in enumerate(row) if cell == 0

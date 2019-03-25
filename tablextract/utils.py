@@ -47,6 +47,7 @@ FUNCTIONS = {-1: 'empty', 0: 'data', 1: 'metadata', 2: 'context', 3: 'decorator'
 POS_TAG_CATEGORIES = ('J', 'N', 'R', 'V', 'other')
 
 URL_GECKODRIVER = 'https://github.com/mozilla/geckodriver/releases'
+INLINE_TAGS = ['a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'col', 'colgroup', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'object', 'output', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'tt', 'var']
 
 with open(join(PATH_RESOURCES, 'add_render.js'), 'r', encoding='utf-8') as fp:
 	SCRIPT_ADD_RENDER = fp.read()
@@ -240,6 +241,15 @@ def cache(target, args, identifier=None, cache_life=3 * 24 * 3600):
 	res = target(*args)
 	with open(path, 'wb') as fp:
 		pdump((now, res), fp, protocol=3)
+	return res
+
+_tictoc_clock = []
+def tic():
+	_tictoc_clock.append(time())
+
+def toc(print_time=False, message='Elapsed time'):
+	res = time() - _tictoc_clock.pop(-1)
+	if print_time: print('%s: %.4f' % (message, res))
 	return res
 
 # --- network -----------------------------------------------------------------
