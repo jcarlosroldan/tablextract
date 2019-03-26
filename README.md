@@ -84,6 +84,13 @@ Each `Table` object has the following properties and methods:
 * `record: list of dict of {str, str}`: Database-like records extracted from the table.
 * `score: float`: Estimation of how properly the table was extracted, between 0 and 1, being 1 a perfect extraction.
 
+## Notes
+
+If you update this library and you get the error `sre_constants.error: bad escape \p at position 257`, you might be using a corrupted environment. You can either:
+
+* Try to fix your current environment by forcing the download of SpaCy models: `python3 -m spacy download en`
+* Create a new environment to work with: `python3 -m venv my_new_env`, `source my_new_env/bin/activate`
+
 ## Changes
 
 ### v1.2

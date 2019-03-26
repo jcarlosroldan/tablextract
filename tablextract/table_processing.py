@@ -566,9 +566,6 @@ def detect_orientation(table):
 		return detect_orientation_silhouette(table)
 
 def structural_analysis(table):
-	# TODO double headers
-	merge_headers(table)
-	# TODO split headers
 	rv, cv, tv = (table.variabilities[o] for o in ORIENTATIONS)
 	all_headers = all(c == 1 for row in table.functions for c in row if c != -1)
 	all_data = all(c == 0 for row in table.functions for c in row if c != -1)
@@ -595,24 +592,56 @@ def structural_analysis(table):
 	elif first_col_header:
 		table.kind = 'vertical listing'
 
-def merge_headers(table):
-	# TODO merge hierarchical headers
-	pass
-
 def interpret(table):
+	texts, functions = simplify_headers(table)
 	if table.kind == 'enumeration' or table.kind == 'unknown':
-		res = [{'attribute_0': text} for row in table.texts for text in row if len(text)]
+		res = [{'attribute_0': text} for row in texts for text in row if len(text)]
 	elif table.kind == 'matrix':
 		res = [
-			{table.texts[0][0]: table.texts[r][0], 'attribute_0': table.texts[0][c], 'attribute_1': table.texts[r][c]}
-			for r, row in enumerate(table.functions) for c, cell in enumerate(row) if cell == 0
+			{texts[0][0]: texts[r][0], 'attribute_0': texts[0][c], 'attribute_1': texts[r][c]}
+			for r, row in enumerate(functions) for c, cell in enumerate(row) if cell == 0
 		]
 	elif table.kind == 'horizontal listing':
-		res = [{k: v for k, v in zip(table.texts[0], row)} for row in table.texts[1:]]
+		res = [{k: v for k, v in zip(texts[0], row)} for row in texts[1:]]
 	elif table.kind == 'vertical listing':
-		first_column = [row[0] for row in table.texts]
-		res = [{k: v for k, v in zip(first_column, [r[c] for r in table.texts])} for c in range(1, len(table.functions[0]))]
+		first_column = [row[0] for row in texts]
+		res = [{k: v for k, v in zip(first_column, [r[c] for r in texts])} for c in range(1, len(functions[0]))]
 	table.record = res
+
+def simplify_headers(table):
+	# TODO Double headers, split headers
+	# compute how many header rows and cols are used
+	first_header_rows = 0
+	for row in table.functions:
+		if 1 in row and all(f in [-1, 1] for f in row):
+			first_header_rows += 1
+		else:
+			break
+	first_header_cols = 0
+	for c in range(table.cols()):
+		col = [row[c] for row in table.functions]
+		if 1 in col and all(f in [-1, 1] for f in col):
+			first_header_cols += 1
+		else:
+			break
+	# merge the headers
+	texts = [r[:] for r in table.texts]
+	functions = [r[:] for r in table.functions]
+	if first_header_rows > 1:
+		for r in range(first_header_rows - 1, 0, -1):
+			for c in range(table.cols()):
+				if texts[r][c] != '' and texts[r][c] != texts[r - 1][c]:
+					texts[r - 1][c] += '·' + texts[r][c]
+			texts.pop(r)
+			functions.pop(r)
+	if first_header_cols > 1:
+		for c in range(first_header_cols - 1, 0, -1):
+			for r in range(table.rows()):
+				if texts[r][c] != '' and texts[r][c] != texts[r][c - 1]:
+					texts[r][c - 1] += '·' + texts[r][c]
+			texts = [row[:c] + row[c + 1:] for row in texts]
+			functions = [row[:c] + row[c + 1:] for row in functions]
+	return texts, functions
 
 _compute_score_functions = {0: 1, -1: 0.5, 1: 0}
 def compute_score(table):
