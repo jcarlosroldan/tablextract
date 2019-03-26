@@ -103,6 +103,7 @@ Released on Mar 25, 2019.
 * The previous and next non-inline tags with text relative to the table is extracted as context.
 * The hierarchy of header tags h1-h6 is extracted as context.
 * More tables are extracted on the location stage.
+* Repeated headers and hierarchic headers are more clear.
 
 ### v1.1
 

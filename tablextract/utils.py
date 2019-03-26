@@ -181,6 +181,18 @@ def seconds_to_human(seconds):
 	''' Returns a human readable string from a number of seconds. '''
 	return str(timedelta(seconds=int(seconds))).zfill(8)
 
+def rename_equal(names):
+	occurrences = {}
+	res = []
+	for name in names:
+		if name in occurrences:
+			occurrences[name] += 1
+		else:
+			occurrences[name] = 1
+		res.append((name, occurrences[name]))
+	res = [elem if occurrences[elem] == 1 else '%s·%d' % (elem, occ) for elem, occ in res]
+	return res
+
 # --- parsing -----------------------------------------------------------------
 
 _find_dates_extractor = DateExtractor()

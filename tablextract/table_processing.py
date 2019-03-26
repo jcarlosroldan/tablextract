@@ -641,6 +641,13 @@ def simplify_headers(table):
 					texts[r][c - 1] += '·' + texts[r][c]
 			texts = [row[:c] + row[c + 1:] for row in texts]
 			functions = [row[:c] + row[c + 1:] for row in functions]
+	# resolve headers with the same name
+	if first_header_rows > 0:
+		texts[0] = rename_equal(texts[0])
+	if first_header_cols > 0:
+		first_col = rename_equal([row[0] for row in texts])
+		for r, elem in enumerate(first_col):
+			texts[r][0] = elem
 	return texts, functions
 
 _compute_score_functions = {0: 1, -1: 0.5, 1: 0}
