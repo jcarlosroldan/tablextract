@@ -3,13 +3,7 @@ from bs4 import BeautifulSoup as soup
 from collections import Counter, OrderedDict
 from copy import deepcopy
 from datetime import datetime as dt, timedelta
-try:
-	from etk.extractors.date_extractor import DateExtractor
-except OSError:
-	from spacy.cli import download
-	download('en_core_web_sm')
-	from etk.extractors.date_extractor import DateExtractor
-from etk.extractors.spacy_ner_extractor import SpacyNerExtractor
+from date_extractor import extract_date
 from math import sqrt
 from numpy import array as ndarray
 from nltk import download as nltk_download, pos_tag, word_tokenize
@@ -195,21 +189,12 @@ def rename_equal(names):
 
 # --- parsing -----------------------------------------------------------------
 
-_find_dates_extractor = DateExtractor()
 def find_dates(text):
 	try:
-		res = _find_dates_extractor.extract(text, prefer_language_date_order=False, detect_relative_dates=False)
-		if len(res): return res[0].value
+		res = extract_date(text, return_precision=True)
+		if res != None and res[1] != 'year': return res[0]
 	except:
-		log('info', f'ETK DateExtractor raised an error on value {text}. Using RegEx fallback instead.')
-
-_find_entities_extractor = SpacyNerExtractor('dummy_parameter')
-def find_entities(text):
-	try:
-		return {ext.value: ext.tag for ext in _find_entities_extractor.extract(text)}
-	except:
-		log('info', f'ETK SpacyNerExtractor raised an error on value {text}.')
-		return {}
+		log('info', f'date_extractor.extract_date raised an error on value {text}.')
 
 def lexical_densities(text, categories=POS_TAG_CATEGORIES):
 	cats = [cat[0] for word, cat in pos_tag(word_tokenize(text))]

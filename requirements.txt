@@ -1,5 +1,5 @@
 bs4>=0.0.1
-etk>=2.1.5
+date-extractor>=3.9.1
 nltk>=3.3
 requests>=2.18.4
 scikit-learn>=0.19.2
