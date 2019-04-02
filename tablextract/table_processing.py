@@ -327,7 +327,6 @@ def place_context(table):
 	if len(header_tags):
 		last_pos = int(header_tags[0].name[1])
 		for header_tag in header_tags:
-			print(header_tag)
 			k = 'h_%s' % header_tag.name[1]
 			if k not in table.context and int(header_tag.name[1]) <= last_pos:
 				table.context[k] = header_tag.text.strip()
