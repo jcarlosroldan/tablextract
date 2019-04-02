@@ -2,6 +2,7 @@ from tablextract.utils import *
 
 PADDING_CELL = soup('<td data-padding-cell></td>', 'html.parser').td
 FIND_DIGITS = compile(r'\d+').findall
+FIND_HEADINGS = compile(r'h\d')
 STOPWORDS = stopwords.words('english')
 FIND_STOPWORDS = lambda txt: [w for w in findall(r'[^\s]+', txt.lower()) if w in STOPWORDS]
 COLOR_STYLE_PROPERTIES = ['color', 'background-color', 'border-left-color', 'border-bottom-color', 'border-right-color', 'border-top-color', 'outline-color']
@@ -322,15 +323,19 @@ def place_context(table):
 					table.texts[r].append('')
 	table.context = {'_'.join(map(str, k)): extract_text(v) for k, v in table.context.items()}
 	# add header tags as context
-	header_tags = [table.element.find_previous('h%d' % n) for n in range(1, 7)]
-	for n, hn in enumerate(header_tags, 1):
-		if hn != None:
-			table.context['h_%d' % n] = hn.text.strip()
+	header_tags = table.element.find_all_previous(FIND_HEADINGS)
+	if len(header_tags):
+		last_pos = int(header_tags[0].name[1])
+		for header_tag in header_tags:
+			print(header_tag)
+			k = 'h_%s' % header_tag.name[1]
+			if k not in table.context and int(header_tag.name[1]) <= last_pos:
+				table.context[k] = header_tag.text.strip()
 	# add previous and next texts as context
 	try:
 		text_before = next(
 			t for t in table.element.find_all_previous()
-			if len(t.text.strip()) and t.name not in INLINE_TAGS
+			if len(t.text.strip()) and t.name not in INLINE_TAGS and t not in table.element.parents
 		)
 		table.context['text_before'] = text_before.text.strip()
 	except StopIteration:
@@ -338,7 +343,7 @@ def place_context(table):
 	try:
 		text_after = next(
 			t for t in table.element.find_all_next()
-			if len(t.text.strip()) and t.name not in INLINE_TAGS
+			if len(t.text.strip()) and t.name not in INLINE_TAGS and t not in table.element.parents
 		)
 		table.context['text_after'] = text_after.text.strip()
 	except StopIteration:
