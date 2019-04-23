@@ -77,7 +77,7 @@ def locate(url, document):
 		if not len(table.select('table')):
 			yield Table(url, table['data-xpath'], table)
 
-def segmentate(table):
+def segmentate(table, add_link_urls=False):
 	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]
 	elements, context = clean_table(elements)
 	features = []
@@ -91,7 +91,7 @@ def segmentate(table):
 			else:
 				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c)
 			row_data.append(cell_feats)
-			row_text.append(extract_text(cell))
+			row_text.append(extract_text(cell, add_link_urls=add_link_urls, base_url=table.url))
 		features.append(row_data)
 		texts.append(row_text)
 	table.elements = elements
@@ -261,7 +261,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 		del res['height']
 	return res
 
-def extract_text(element, add_image_text=True):
+def extract_text(element, add_image_text=True, add_link_urls=False, base_url=''):
 	res = []
 	for desc in element.descendants:
 		if desc.name == None:
@@ -273,6 +273,9 @@ def extract_text(element, add_image_text=True):
 				res.append('(%s)' % desc['title'])
 			elif desc.has_attr('src') and len(desc['src']):
 				res.append('(%s)' % desc['src'].rsplit('/')[-1].split('.')[0])
+		elif add_link_urls and desc.name == 'a':
+			if desc.has_attr('href') and len(desc['href']):
+				res.append('(%s)' % urljoin(base_url, desc['href']))
 	return ' '.join([r.strip() for r in res]).strip()
 
 def place_context(table):
@@ -584,13 +587,13 @@ def structural_analysis(table):
 		elif min_variability == cv:
 			table.kind = 'vertical listing'
 			if all_headers:
-				table.functions = [[[1] + [0] * table.cols()] for _ in range(table.rows())]
+				table.functions = [[1] + [0] * (table.cols() - 1) for _ in range(table.rows())]
 		else:
 			table.kind = 'enumeration'
 	elif first_row_header and first_col_header:
 		table.kind = 'matrix'
-		for c in range(1, table.cols()): table.functions[0][c] = 5
-		for r in range(1, table.rows()): table.functions[r][0] = 5
+		for c in range(1, table.cols()): table.functions[0][c] = FUNCTIONS_REVERSE['indexer']
+		for r in range(1, table.rows()): table.functions[r][0] = FUNCTIONS_REVERSE['indexer']
 	elif first_row_header:
 		table.kind = 'horizontal listing'
 	elif first_col_header:

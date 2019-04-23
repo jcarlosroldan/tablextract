@@ -58,12 +58,13 @@ You can install this library via pip using:
 
 This library only have one function `tables`, that returns a list of `Table` objects.
 
-`tables(url, css_filter='table', xpath_filter=None, request_cache_time=None)`
+`tables(url, css_filter='table', xpath_filter=None, request_cache_time=None, add_link_urls=False)`
 
 * `url: str`: URL of the site where tables should be downloaded from.
-* `css_filter: str`: When specified, only tables that match the selector will be returned.
-* `xpath_filter: str`: When specified, only tables that match the XPATH selector will be returned.
-* `request_cache_time: int`: When specified, downloaded documents will be cached for that number of seconds.
+* `css_filter: str`: Return just tables that match the CSS selector.
+* `xpath_filter: str`: Return just tables that match the XPath.
+* `request_cache_time: int`: Cache the downloaded documents for that number of seconds.
+* `add_link_urls: bool`: Keep the links URL at `Table.texts` (see below).
 
 Each `Table` object has the following properties and methods:
 
@@ -98,12 +99,14 @@ If you update this library and you get the error `sre_constants.error: bad escap
 Released on Mar 25, 2019.
 
 * Named entity detection is not performed during feature extraction stage.
-* Table cleaning bug: tables with last row empty are not extracted.
 * Removed Wikipedia-specific selector constraint
 * The previous and next non-inline tags with text relative to the table is extracted as context.
 * The hierarchy of header tags h1-h6 is extracted as context.
 * More tables are extracted on the location stage.
 * Repeated headers and hierarchic headers are more clear.
+* Added parameter to keep the links URL at the text.
+* *Bugfix* Tables with last row empty were not extracted.
+* *Bugfix* The Table.record was not extracted for some vertical listings.
 
 ### v1.1
 

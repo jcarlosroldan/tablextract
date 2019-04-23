@@ -38,6 +38,7 @@ PATH_LOG = join(PATH_RESOURCES, 'log_%s.txt')
 
 PATTERN_LOG = '[%s] %s\n'
 FUNCTIONS = {-1: 'empty', 0: 'data', 1: 'metadata', 2: 'context', 3: 'decorator', 4: 'total', 5: 'indexer', 6: 'factorised'}
+FUNCTIONS_REVERSE = {v: k for k, v in FUNCTIONS.items()}
 POS_TAG_CATEGORIES = ('J', 'N', 'R', 'V', 'other')
 
 URL_GECKODRIVER = 'https://github.com/mozilla/geckodriver/releases'
