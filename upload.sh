@@ -8,3 +8,5 @@ git commit
 git push origin master
 python3 setup.py sdist bdist_wheel
 python3 -m twine upload dist/*
+pip3 uninstall tablextract
+pip3 install tablextract -U

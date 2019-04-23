@@ -8,7 +8,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 
 setup(
 	name='tablextract',
-	version='1.2.6',
+	version='1.2.7',
 	author='Juan C. Roldán',
 	author_email='juancarlos@sevilla.es',
 	description='Extract the information represented in any HTML table as database-like records',
