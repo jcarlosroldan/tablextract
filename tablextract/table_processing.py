@@ -77,7 +77,7 @@ def locate(url, document):
 		if not len(table.select('table')):
 			yield Table(url, table['data-xpath'], table)
 
-def segmentate(table, add_link_urls=False):
+def segmentate(table, add_link_urls=False, normalization='MinMax'):
 	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]
 	elements, context = clean_table(elements)
 	features = []
@@ -89,7 +89,7 @@ def segmentate(table, add_link_urls=False):
 			if 'data-padding-cell' in cell.attrs:
 				cell_feats = {}
 			else:
-				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c)
+				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c, normalization='MinMax')
 			row_data.append(cell_feats)
 			row_text.append(extract_text(cell, add_link_urls=add_link_urls, base_url=table.url))
 		features.append(row_data)
@@ -201,7 +201,7 @@ def clean_table(table):
 			context[('c', k, nv)] = vv
 	return table, context
 
-def extract_features(element, rows, cols, row_index=None, col_index=None):
+def extract_features(element, rows, cols, row_index=None, col_index=None, normalization='MinMax'):
 	if 'data-computed-style' not in element.attrs:
 		return None
 	css_properties = [prop.split(':') for prop in element['data-computed-style'].split('|')]
@@ -415,7 +415,7 @@ def add_variability(table):
 			for orientation in ORIENTATIONS:
 				table.variabilities[(orientation, feature_type)] /= ft_sum
 
-def functional_analysis(table):
+def functional_analysis(table, orientation_features='no', clustering_features=PROPERTY_KINDS.keys(), dimensionality_reduction='no', clustering_method='k-means'):
 	# ensure variables are normalised
 	for row in table.features:
 		for cell in row:
@@ -555,14 +555,14 @@ def detect_orientation_table_diff(table):
 		[c for r in table.features[1:] for c in r[1:]]  # rest
 	]
 	groups = [vectors_average(cells) for cells in groups]
-	d01 = vector_module(vectors_difference(groups[0], groups[1]))
-	d02 = vector_module(vectors_difference(groups[0], groups[2]))
-	d13 = vector_module(vectors_difference(groups[1], groups[3]))
-	d23 = vector_module(vectors_difference(groups[2], groups[3]))
+	d1 = vector_module(vectors_difference(groups[0], groups[1]))
+	d2 = vector_module(vectors_difference(groups[0], groups[2]))
+	d3 = vector_module(vectors_difference(groups[1], groups[3]))
+	d4 = vector_module(vectors_difference(groups[2], groups[3]))
 	res = [
-		d02 + d13 - d01 - d23,
-		d01 + d23 - d02 - d13,
-		d23 + d13 - d01 - d02
+		d2 + d3 - d1 - d4,
+		d1 + d4 - d2 - d3,
+		d3 + d4 - d1 - d2
 	]
 	return ORIENTATIONS[res.index(max(res))]
 

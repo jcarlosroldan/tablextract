@@ -289,7 +289,7 @@ def get_driver(headless=True, disable_images=True, open_links_same_tab=False):
 		exec_path, log_path = find_driver_path()
 		try:
 			_driver = Firefox(options=opts, executable_path=exec_path, log_path=log_path)
-		except: # if driver not detected, try to use the default, if any
+		except:  # if driver not detected, try to use the default, if any
 			_driver = Firefox(options=opts, log_path=log_path)
 		_driver.set_page_load_timeout(15)
 		register(close_driver)

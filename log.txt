@@ -1,0 +1,459 @@
+INFO 1803 STARTING RUN
+INFO 1803 TESTING with arguments {'normalization': 'MinMax'}
+INFO 11696 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer
+ empty      0        1        2        0
+  data      0       166       17       8
+ header     0        8        51       2
+indexer     0        0        0        17
+INFO 11696 TESTING with arguments {'normalization': 'MaxAbs'}
+INFO 2062 STARTING RUN
+INFO 2063 TESTING with arguments {'normalization': 'MinMax'}
+INFO 1848 STARTING RUN
+INFO 1849 TESTING with arguments {'normalization': 'MinMax'}
+DEBUG 2889 POST http://127.0.0.1:37675/session {"capabilities": {"firstMatch": [{}], "alwaysMatch": {"browserName": "firefox", "acceptInsecureCerts": true, "moz:firefoxOptions": {"prefs": {"dom.ipc.plugins.enabled.libflashplayer.so": "false", "permissions.default.image": 2}, "args": ["-headless"]}}}, "desiredCapabilities": {"browserName": "firefox", "acceptInsecureCerts": true, "marionette": true, "moz:firefoxOptions": {"prefs": {"dom.ipc.plugins.enabled.libflashplayer.so": "false", "permissions.default.image": 2}, "args": ["-headless"]}}}
+DEBUG 2889 Starting new HTTP connection (1): 127.0.0.1:37675
+DEBUG 5033 http://127.0.0.1:37675 "POST /session HTTP/1.1" 200 680
+DEBUG 5034 Finished Request
+DEBUG 5035 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/timeouts {"pageLoad": 15000}
+DEBUG 5055 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/timeouts HTTP/1.1" 200 14
+DEBUG 5056 Finished Request
+DEBUG 5056 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 6254 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 6254 Finished Request
+DEBUG 6254 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 7912 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 7914 Finished Request
+DEBUG 8415 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 8482 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585892
+DEBUG 8492 Finished Request
+DEBUG 9077 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 10369 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 10370 Finished Request
+DEBUG 10370 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 14880 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 14885 Finished Request
+DEBUG 15385 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 15632 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5349607
+DEBUG 15669 Finished Request
+DEBUG 18461 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 19624 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 19627 Finished Request
+DEBUG 19628 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 26470 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 26470 Finished Request
+DEBUG 26971 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 27527 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13219051
+DEBUG 27628 Finished Request
+INFO 32342 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.94      0.91      0.92       191
+      header       0.82      0.80      0.81        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.88      0.88      0.88       272
+   macro avg       0.60      0.68      0.63       272
+weighted avg       0.88      0.88      0.88       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        2        1        0    
+  data      0       173       10       8    
+ header     0        10       49       2    
+indexer     0        0        0        17   
+INFO 32342 TESTING with arguments {'normalization': 'MaxAbs'}
+DEBUG 32345 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 32693 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 32694 Finished Request
+DEBUG 32694 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 34259 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 34260 Finished Request
+DEBUG 34760 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 34832 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585862
+DEBUG 34843 Finished Request
+DEBUG 35470 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 36039 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 36042 Finished Request
+DEBUG 36042 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 40915 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 40915 Finished Request
+DEBUG 41416 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 41665 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5358862
+DEBUG 41707 Finished Request
+DEBUG 44491 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 45223 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 45223 Finished Request
+DEBUG 45224 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 51576 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 51576 Finished Request
+DEBUG 52077 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 52668 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13245030
+DEBUG 52759 Finished Request
+INFO 57393 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 57394 TESTING with arguments {'normalization': 'Standard'}
+DEBUG 57396 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 57742 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 57742 Finished Request
+DEBUG 57743 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 59283 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 59284 Finished Request
+DEBUG 59785 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 59846 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585877
+DEBUG 59857 Finished Request
+DEBUG 60483 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 61105 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 61107 Finished Request
+DEBUG 61108 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 65819 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 65820 Finished Request
+DEBUG 66321 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 66655 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5360521
+DEBUG 66690 Finished Request
+DEBUG 70108 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 70999 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 71000 Finished Request
+DEBUG 71000 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 77770 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 77771 Finished Request
+DEBUG 78271 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 79005 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13239450
+DEBUG 79075 Finished Request
+INFO 83868 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.94      0.91      0.92       191
+      header       0.82      0.80      0.81        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.88      0.88      0.88       272
+   macro avg       0.60      0.68      0.63       272
+weighted avg       0.88      0.88      0.88       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        2        1        0    
+  data      0       173       10       8    
+ header     0        10       49       2    
+indexer     0        0        0        17   
+INFO 83868 TESTING with arguments {'orientation_features': 'no'}
+DEBUG 83871 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 84221 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 84221 Finished Request
+DEBUG 84222 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 85910 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 85910 Finished Request
+DEBUG 86411 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 86491 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585877
+DEBUG 86499 Finished Request
+DEBUG 87148 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 87800 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 87801 Finished Request
+DEBUG 87801 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 92750 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 92750 Finished Request
+DEBUG 93251 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 93530 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5336593
+DEBUG 93572 Finished Request
+DEBUG 96444 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 97296 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 97297 Finished Request
+DEBUG 97297 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 103762 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 103762 Finished Request
+DEBUG 104263 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 104863 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13219051
+DEBUG 104931 Finished Request
+INFO 109407 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 109408 TESTING with arguments {'orientation_features': 'var'}
+DEBUG 109409 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 109755 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 109762 Finished Request
+DEBUG 109764 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 111299 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 111300 Finished Request
+DEBUG 111800 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 111868 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585862
+DEBUG 111877 Finished Request
+DEBUG 112435 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 112960 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 112961 Finished Request
+DEBUG 112962 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 117634 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 117635 Finished Request
+DEBUG 118136 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 118380 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5331188
+DEBUG 118409 Finished Request
+DEBUG 121074 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 121967 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 121969 Finished Request
+DEBUG 121969 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 128367 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 128368 Finished Request
+DEBUG 128869 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 129501 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13287584
+DEBUG 129572 Finished Request
+INFO 134437 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 134438 TESTING with arguments {'orientation_features': 'sty-var'}
+DEBUG 134440 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 134874 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 134875 Finished Request
+DEBUG 134875 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 137598 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 137598 Finished Request
+DEBUG 138099 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 138196 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585862
+DEBUG 138218 Finished Request
+DEBUG 139008 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 139762 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 139767 Finished Request
+DEBUG 139777 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 144813 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 144814 Finished Request
+DEBUG 145314 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 145585 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5358877
+DEBUG 145637 Finished Request
+DEBUG 148664 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 149583 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 149583 Finished Request
+DEBUG 149584 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 157370 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 157371 Finished Request
+DEBUG 157872 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 158542 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13221415
+DEBUG 158599 Finished Request
+INFO 163464 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.94      0.91      0.92       191
+      header       0.82      0.80      0.81        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.88      0.88      0.88       272
+   macro avg       0.60      0.68      0.63       272
+weighted avg       0.88      0.88      0.88       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        2        1        0    
+  data      0       173       10       8    
+ header     0        10       49       2    
+indexer     0        0        0        17   
+INFO 163465 TESTING with arguments {'orientation_features': 'syn-var'}
+DEBUG 163468 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 163806 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 163806 Finished Request
+DEBUG 163806 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 165430 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 165430 Finished Request
+DEBUG 165931 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 165994 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585862
+DEBUG 166004 Finished Request
+DEBUG 166522 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 167085 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 167086 Finished Request
+DEBUG 167086 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 171588 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 171588 Finished Request
+DEBUG 172089 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 172361 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5340473
+DEBUG 172388 Finished Request
+DEBUG 175146 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 176073 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 176075 Finished Request
+DEBUG 176076 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 183410 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 183411 Finished Request
+DEBUG 183912 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 184671 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13245106
+DEBUG 184742 Finished Request
+INFO 189381 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 189382 TESTING with arguments {'orientation_features': 'sem-var'}
+DEBUG 189384 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 189742 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 189742 Finished Request
+DEBUG 189742 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 191259 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 191259 Finished Request
+DEBUG 191760 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 191832 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585877
+DEBUG 191842 Finished Request
+DEBUG 192508 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 193075 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 193075 Finished Request
+DEBUG 193075 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 197833 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 197834 Finished Request
+DEBUG 198335 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 198725 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5340458
+DEBUG 198778 Finished Request
+DEBUG 201343 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 202211 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 202212 Finished Request
+DEBUG 202212 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 208361 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 208362 Finished Request
+DEBUG 208862 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 209501 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13226724
+DEBUG 209587 Finished Request
+INFO 214415 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 214415 TESTING with arguments {'orientation_features': 'str-var'}
+DEBUG 214417 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 214733 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 214741 Finished Request
+DEBUG 214742 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 216271 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 216279 Finished Request
+DEBUG 216782 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 216858 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585862
+DEBUG 216866 Finished Request
+DEBUG 217449 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 218067 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 218067 Finished Request
+DEBUG 218068 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 222407 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 222407 Finished Request
+DEBUG 222908 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 223206 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 5356624
+DEBUG 223245 Finished Request
+DEBUG 226132 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Moon"}
+DEBUG 226892 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 226892 Finished Request
+DEBUG 226892 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 233040 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 233041 Finished Request
+DEBUG 233542 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 234189 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 13245095
+DEBUG 234256 Finished Request
+INFO 238559 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 238560 TESTING with arguments {'orientation_features': 'sty-var-half'}
+DEBUG 238562 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Albedo"}
+DEBUG 238841 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 238842 Finished Request
+DEBUG 238842 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+DEBUG 240447 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync HTTP/1.1" 200 14
+DEBUG 240450 Finished Request
+DEBUG 240950 GET http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source {}
+DEBUG 241018 http://127.0.0.1:37675 "GET /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/source HTTP/1.1" 200 1585877
+DEBUG 241030 Finished Request
+DEBUG 241757 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url {"url": "https://en.wikipedia.org/wiki/Fiji"}
+DEBUG 242241 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
+DEBUG 242242 Finished Request
+DEBUG 242242 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
