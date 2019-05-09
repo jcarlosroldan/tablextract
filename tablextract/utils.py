@@ -88,11 +88,12 @@ def vectors_average(vectors):
 	vectors = [v for v in vectors if len(v)]
 	res = {}
 	if len(vectors):
-		for feat in vectors[0]:
-			if type(vectors[0][feat]) == str:
-				val = Counter(v[feat] for v in vectors).most_common(1)[0][0]
+		feats = {feat for vector in vectors for feat in vector}
+		for feat in feats:
+			if type(next(vector[feat] for vector in vectors if feat in vector)) == str:
+				val = Counter(v[feat] for v in vectors if feat in v).most_common(1)[0][0]
 			else:
-				val = sum(v[feat] for v in vectors) / len(vectors)
+				val = sum(v[feat] for v in vectors if feat in v) / len(vectors)
 			res[feat] = val
 	return res
 
@@ -131,8 +132,11 @@ def vectors_difference(v1, v2, prefix=''):
 	numerical features, absolute value difference is computed. For categorical
 	features, Gower distance is used. '''
 	res = {}
-	for feat in v1:
-		if type(v1[feat]) == str:
+	feats = set(v1.keys()).union(set(v2.keys()))
+	for feat in feats:
+		if feat not in v1 or feat not in v2:
+			res[prefix + feat] = 1
+		elif type(v1[feat]) == str:
 			res[prefix + feat] = 0 if v1[feat] == v2[feat] else 1
 		else:
 			res[prefix + feat] = abs(v1[feat] - v2[feat])

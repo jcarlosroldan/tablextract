@@ -457,3 +457,258 @@ DEBUG 241757 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d
 DEBUG 242241 http://127.0.0.1:37675 "POST /session/9d7e567b-db61-4309-b7c7-e27847d6c08b/url HTTP/1.1" 200 14
 DEBUG 242242 Finished Request
 DEBUG 242242 POST http://127.0.0.1:37675/session/9d7e567b-db61-4309-b7c7-e27847d6c08b/execute/sync {"script": "function pathTo(element) {\n\tif (element === document) return ''\n\tvar ix = 0\n\tvar siblings = element.parentNode.childNodes\n\tfor (var i = 0; i < siblings.length; i++) {\n\t\tif (siblings[i] === element) return pathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']'\n\t\tif (siblings[i].nodeType === 1 && siblings[i].tagName === element.tagName) ix++\n\t}\n}\n\nvar removeElements = []\nfunction addRender(subtree) {\n\tvar style = getComputedStyle(subtree)\n\tif (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {\n\t\tremoveElements.push(subtree)\n\t\treturn\n\t}\n\tvar serialStyle = ''\n\tfor (let prop of style) {\n\t\tif (prop[0] != '-') {\n\t\t\tserialStyle += prop + ':' + style[prop].replace(/:/g, '') + '|'\n\t\t}\n\t}\n\tserialStyle += 'width:' + subtree.offsetWidth / document.body.offsetWidth + '|height:' + subtree.offsetHeight / document.body.offsetHeight\n\tif (subtree.tagName == 'TD' || subtree.tagName == 'TH') {\n\t\tserialStyle += '|colspan:' + subtree.colSpan + '|rowspan:' + subtree.rowSpan\n\t}\n\tsubtree.setAttribute('data-computed-style', serialStyle)\n\tsubtree.setAttribute('data-xpath', pathTo(subtree).toLowerCase())\n\tfor (let child of subtree.children) addRender(child)\n}\n\nfunction preprocess() {\n\tvar elements = document.querySelectorAll(injected_script_selector)\n\tfor (let subtree of elements) addRender(subtree)\n\tfor (let elem of removeElements) elem.remove()\n}\n\nconst injected_script_selector = arguments[0]\n\nif (document.readyState == 'complete') {\n\tpreprocess()\n} else {\n\twindow.onload = function(){preprocess()}\n}", "args": ["table"]}
+INFO 1872 STARTING RUN
+INFO 1872 TESTING with arguments {'normalization': 'MinMax'}
+INFO 8883 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 8883 TESTING with arguments {'normalization': 'MaxAbs'}
+INFO 15992 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.94      0.91      0.92       191
+      header       0.82      0.80      0.81        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.88      0.88      0.88       272
+   macro avg       0.60      0.68      0.63       272
+weighted avg       0.88      0.88      0.88       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        2        1        0    
+  data      0       173       10       8    
+ header     0        10       49       2    
+indexer     0        0        0        17   
+INFO 15992 TESTING with arguments {'normalization': 'Standard'}
+INFO 22841 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 22841 TESTING with arguments {'orientation_features': 'no'}
+INFO 29858 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 29858 TESTING with arguments {'orientation_features': 'var'}
+INFO 1575 STARTING RUN
+INFO 1575 TESTING with arguments {'normalization': 'MinMax'}
+INFO 8543 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 8543 TESTING with arguments {'normalization': 'MaxAbs'}
+INFO 1474 STARTING RUN
+INFO 1474 TESTING with arguments {'normalization': 'MinMax'}
+INFO 1465 STARTING RUN
+INFO 1465 TESTING with arguments {'normalization': 'MinMax'}
+INFO 9197 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 9198 TESTING with arguments {'normalization': 'MaxAbs'}
+INFO 16741 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 16742 TESTING with arguments {'normalization': 'Standard'}
+INFO 24278 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 24278 TESTING with arguments {'orientation_features': 'no'}
+INFO 31753 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 31753 TESTING with arguments {'orientation_features': 'var'}
+INFO 39379 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 39380 TESTING with arguments {'orientation_features': 'sty-var'}
+INFO 47040 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 47041 TESTING with arguments {'orientation_features': 'syn-var'}
+INFO 54746 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 54746 TESTING with arguments {'orientation_features': 'sem-var'}
+INFO 62485 Classification report:
+              precision    recall  f1-score   support
+
+       empty       0.00      0.00      0.00         3
+        data       0.95      0.87      0.91       191
+      header       0.73      0.84      0.78        61
+     indexer       0.63      1.00      0.77        17
+
+   micro avg       0.86      0.86      0.86       272
+   macro avg       0.58      0.68      0.61       272
+weighted avg       0.87      0.86      0.86       272
+
+Confusion matrix:
+          empty     data    header  indexer 
+ empty      0        1        2        0    
+  data      0       166       17       8    
+ header     0        8        51       2    
+indexer     0        0        0        17   
+INFO 62486 TESTING with arguments {'orientation_features': 'str-var'}

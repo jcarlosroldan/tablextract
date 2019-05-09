@@ -1,5 +1,5 @@
-from tablextract.utils import *
-from tablextract.table_processing import *
+from .utils import *
+from .table_processing import *
 
 def tables(
 	url,

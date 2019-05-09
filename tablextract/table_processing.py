@@ -1,4 +1,4 @@
-from tablextract.utils import *
+from .utils import *
 
 PADDING_CELL = soup('<td data-padding-cell></td>', 'html.parser').td
 FIND_DIGITS = compile(r'\d+').findall

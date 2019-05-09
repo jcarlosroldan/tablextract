@@ -52,6 +52,7 @@ def evaluation(**kwargs):
 	Y_computed = []
 	Y_label = []
 	for url, table_labels in LABELS.items():
+		print(url)
 		for table_label, table_computed in zip(table_labels, tables(url, request_cache_time=FOREVER, **kwargs)):
 			if table_label != None:
 				shp_label = len(table_label), len(table_label[0])
