@@ -281,8 +281,8 @@ def extract_text(element, add_image_text=True, add_link_urls=False, base_url='')
 def place_context(table):
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
-		(k[1], k[2], extract_features(v, rows, cols, k[1], 0), v)
-		for k, v in table.context.items() if k[0] == 'r')
+		(position, i, extract_features(v, rows, cols, position, 0), v)
+		for (direction, position, i), v in table.context.items() if direction == 'r')
 	)
 	top_rows = [row for row in context_rows if row[0] == 0]
 	middle_rows = [row for row in context_rows if 0 < row[0] < table.rows() and row[1] == 0]
