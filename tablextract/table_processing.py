@@ -245,7 +245,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 			child = extract_features(c, rows, cols)
 			if child == None:
 				continue
-			child_area = child['width'] * child['height']
+			child_area = min(area, child['width'] * child['height'])
 			area -= child_area
 			nodes.append([child_area, child])
 	nodes.insert(0, [area, res])
