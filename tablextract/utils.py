@@ -188,6 +188,13 @@ def rename_equal(names):
 	res = [elem if occurrences[elem] == 1 else '%s·%d' % (elem, occ) for elem, occ in res]
 	return res
 
+def render_tabular_array(table, max_width=100):
+	res = ''
+	col_width = round(max_width / len(table[0])) - 1
+	for row in table:
+		res += '|'.join(cell[:col_width].replace('\n', ' ').ljust(col_width) for cell in row) + '\n'
+	return res
+
 # --- parsing -----------------------------------------------------------------
 
 def find_dates(text):

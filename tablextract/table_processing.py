@@ -136,7 +136,7 @@ def clean_table(table):
 	width = max(len(row) for row in table)
 	table = [row + [PADDING_CELL] * (width - len(row)) for row in table]
 	# transform empty cells into padding cells
-	# XXX extraer aquí los texts e imágenes
+	# XXX extract text and images here
 	for r, row in enumerate(table):
 		for c, cell in enumerate(row):
 			if not len(' '.join(t.strip() for t in cell.find_all(text=True)).strip()):
@@ -279,51 +279,45 @@ def extract_text(element, add_image_text=True, add_link_urls=False, base_url='')
 	return ' '.join([r.strip() for r in res]).strip()
 
 def place_context(table):
+	# extract fullspan rows
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
 		(position, i, extract_features(v, rows, cols, position, 0), v)
 		for (direction, position, i), v in table.context.items() if direction == 'r')
 	)
-	top_rows = [row for row in context_rows if row[0] == 0]
-	middle_rows = [row for row in context_rows if 0 < row[0] < table.rows() and row[1] == 0]
-	bottom_rows = [row for row in context_rows if row[0] == table.rows()]
+	top_row = [row for row in context_rows if row[0] == 0]
+	top_row = top_row[-1] if len(top_row) else None
+	middle_rows = [row for row in context_rows if 0 < row[0] < rows and row[1] == 0]
+	bot_row = [row for row in context_rows if row[0] == rows]
+	bot_row = bot_row[-1] if len(bot_row) else None
+	# place middle rows as attributes
 	if len(middle_rows):
-		middle_average = vectors_average([r[2] for r in middle_rows])
-		diff_top_row = vector_module(vectors_difference(middle_average, top_rows[-1][2])) if len(top_rows) else 2
-		diff_bot_row = vector_module(vectors_difference(middle_average, bottom_rows[0][2])) if len(bottom_rows) else 2
-		if diff_bot_row < diff_top_row and diff_bot_row < 2:
-			if diff_bot_row < 2:
-				folded = middle_rows + [bottom_rows[0]]
+		copy = False
+		periods = [r2[0] - r1[0] for r1, r2 in zip(middle_rows[:-1], middle_rows[1:])] + [rows - middle_rows[-1][0]]
+		if all(p == 1 for p in periods):
+			if top_row and bot_row:
+				middle_average = vectors_average([r[2] for r in middle_rows])
+				diff_top_row = vector_module(vectors_difference(middle_average, top_row[2]))
+				diff_bot_row = vector_module(vectors_difference(middle_average, bot_row[2]))
+				direction = 'down' if diff_top_row < diff_bot_row else 'up'
+			elif top_row:
+				direction = 'down'
 			else:
-				folded = middle_rows
-			folded = {r: (feats, elem, extract_text(elem), r_i) for r, r_i, feats, elem in folded}
-			for r in range(table.rows()):
-				if r + 1 in folded:
-					table.features[r].append(folded[r + 1][0])
-					table.elements[r].append(folded[r + 1][1])
-					table.texts[r].append(folded[r + 1][2])
-					del table.context[('r', r + 1, folded[r + 1][3])]
-				else:
-					table.features[r].append({})
-					table.elements[r].append(PADDING_CELL)
-					table.texts[r].append('')
+				direction = 'up'
 		else:
-			if diff_top_row < 2:
-				factorised = [top_rows[-1]] + middle_rows
-			else:
-				factorised = middle_rows
-			factorised = {r: (feats, elem, extract_text(elem), r_i) for r, r_i, feats, elem in factorised}
-			value = None
-			for r in range(table.rows()):
-				if r in factorised:
-					table.features[r].append(factorised[r][0])
-					table.elements[r].append(factorised[r][1])
-					table.texts[r].append(factorised[r][2])
-					del table.context[('r', r, factorised[r][3])]
-				else:
-					table.features[r].append({})
-					table.elements[r].append(PADDING_CELL)
-					table.texts[r].append('')
+			copy = True
+			direction = 'down'
+		context_row = None
+		for r in (range(rows) if direction == 'down' else range(rows - 1, -1, -1)):
+			if not copy or context_row is None: context_row = ({}, PADDING_CELL, '')
+			context_row_candidate = [c for c in context_rows if c[0] == r + (1 if direction == 'up' else 0)]
+			if len(context_row_candidate):
+				context_row = context_row_candidate[-1] if direction == 'down' else context_row_candidate[0]
+				del table.context[('r', context_row[0], context_row[1])]
+				context_row = (context_row[2], context_row[3], extract_text(context_row[3]))
+			table.features[r].append(context_row[0])
+			table.elements[r].append(context_row[1])
+			table.texts[r].append(context_row[2])
 	table.context = {'_'.join(map(str, k)): extract_text(v) for k, v in table.context.items()}
 	# add header tags as context
 	header_tags = table.element.find_all_previous(FIND_HEADINGS)
