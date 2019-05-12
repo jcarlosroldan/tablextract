@@ -64,7 +64,8 @@ This library only have one function `tables`, that returns a list of `Table` obj
 * `css_filter: str`: Return just tables that match the CSS selector.
 * `xpath_filter: str`: Return just tables that match the XPath.
 * `request_cache_time: int`: Cache the downloaded documents for that number of seconds.
-* `add_link_urls: bool`: Keep the links URL at `Table.texts` (see below).
+* `add_image_text: bool`: Extract the image title/alt/URL as part of the cell text in `Table.texts`.
+* `add_link_urls: bool`: Extract the links URL as part of the cell text in `Table.texts`.
 
 Each `Table` object has the following properties and methods:
 
@@ -94,12 +95,29 @@ If you update this library and you get the error `sre_constants.error: bad escap
 
 ## Changes
 
+### v1.3
+
+Released on May 12, 2019.
+
+* Added parameter add_link_urls to `tables`.
+* Improved algorithm for context placement.
+* Text is now extractd only while cleaning the table, making the parsing faster.
+* Improved empty cell detection.
+* Empty cells are now preserved both at orientation correction and matrix correction.
+* Lexical density is now not computed for empty cells.
+* Improved format for `render_tabular_array`.
+* Hotfix: 2xn or nx2 tables with the cell (0, 1) or (1, 0) empty could not compute the orientation correction.
+* Bugfix: Some tables with less than 3 tds (but some ths) were not extracted.
+* Bugfix: when images were added to the cell text, that text was used when computing the textual features.
+* Bugfix: Some fullspan tables were not properly extracted.
+* Bugfix: Feature weighting was wrong when the child node was bigger than the parent node.
+
 ### v1.2
 
 Released on Mar 25, 2019.
 
 * Named entity detection is not performed during feature extraction stage.
-* Removed Wikipedia-specific selector constraint
+* Removed Wikipedia-specific selector constraint.
 * The previous and next non-inline tags with text relative to the table is extracted as context.
 * The hierarchy of header tags h1-h6 is extracted as context.
 * More tables are extracted on the location stage.
@@ -117,7 +135,7 @@ Released on Feb 05, 2019.
 * Hierarchical, factorised, and some periodical headers are segmented properly before the extraction.
 * Instead of discarding tables with tables inside and then discarding tables smaller than 2x2, it first removes the small tables and then discards tables with tables inside, in order to get more results.
 * Texts and images are extracted before discarding repeated cells, to avoid discarding rows with changing images.
-* Cache is disabled by default
+* Cache is disabled by default.
 * Readme documentation improved.
 
 ### v1.0
@@ -128,12 +146,12 @@ Released on Jan 24, 2019.
 * The Firefox process is closed automatically when the process ends.
 * Geckodriver `quit` is called instead of `close`.
 * Side-projects has been moved from this core project to tablextract-server and datamart.
-* Fixed project imports and setup
-* More readable Table objects
+* Fixed project imports and setup.
+* More readable Table objects.
 
 ### v0.0.
 
 Released on Jan 22, 2019.
 
 * Initial package upload.
-* Removed side projects to tablextractserver and datamart
+* Removed side projects to tablextractserver and datamart.

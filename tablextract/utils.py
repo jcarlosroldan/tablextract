@@ -43,6 +43,7 @@ POS_TAG_CATEGORIES = ('J', 'N', 'R', 'V', 'other')
 
 URL_GECKODRIVER = 'https://github.com/mozilla/geckodriver/releases'
 INLINE_TAGS = ['a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'col', 'colgroup', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'object', 'output', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'tt', 'var']
+EMPTY_CELL_VALUES = {c * n for n in range(1, 4) for c in ['', '.', '?', '\'', '-', '–', '—']}  # TODO extract language-dependant empty cells, such as n/a
 
 with open(join(PATH_RESOURCES, 'add_render.js'), 'r', encoding='utf-8') as fp:
 	SCRIPT_ADD_RENDER = fp.read()
@@ -188,12 +189,12 @@ def rename_equal(names):
 	res = [elem if occurrences[elem] == 1 else '%s·%d' % (elem, occ) for elem, occ in res]
 	return res
 
-def render_tabular_array(table, max_width=100):
-	res = ''
-	col_width = round(max_width / len(table[0])) - 1
+def render_tabular_array(table, width=100):
+	res = []
+	col_width = round(width / len(table[0])) - 1
 	for row in table:
-		res += '|'.join(cell[:col_width].replace('\n', ' ').ljust(col_width) for cell in row) + '\n'
-	return res
+		res.append('|'.join(str(cell).replace('\n', ' ')[:col_width].ljust(col_width) for cell in row))
+	return '\n'.join(res)
 
 # --- parsing -----------------------------------------------------------------
 
@@ -204,16 +205,18 @@ def find_dates(text):
 	except:
 		log('info', f'date_extractor.extract_date raised an error on value {text}.')
 
-def lexical_densities(text, categories=POS_TAG_CATEGORIES):
-	cats = [cat[0] for word, cat in pos_tag(word_tokenize(text))]
-	C = len(cats)
-	res = {cat: 0 for cat in categories}
-	for cat in cats:
-		if cat in res:
-			res[cat] += 1
-		else:
-			res['other'] += 1
-	return {k: v / C for k, v in res.items()}
+def lexical_densities(text):
+	res = {cat: 0 for cat in POS_TAG_CATEGORIES}
+	if len(text):
+		cats = [cat[0] for word, cat in pos_tag(word_tokenize(text))]
+		C = len(cats)
+		for cat in cats:
+			if cat in res:
+				res[cat] += 1
+			else:
+				res['other'] += 1
+		res = {k: v / C for k, v in res.items()}
+	return res
 
 # --- log ---------------------------------------------------------------------
 

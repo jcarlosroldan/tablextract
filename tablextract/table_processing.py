@@ -71,38 +71,34 @@ class Table:
 
 def locate(url, document):
 	for table in document.select('table[data-xpath]'):
-		if len(table.select('tr')) < 2 or len(table.select('td')) < 4:
+		if len(table.select('tr')) < 2 or len(table.select('th,td')) < 4:
 			table.decompose()
 	for table in document.select('table[data-xpath]'):
 		if not len(table.select('table')):
 			yield Table(url, table['data-xpath'], table)
 
-def segmentate(table, add_link_urls=False):
-	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]
-	elements, context = clean_table(elements)
+def segmentate(table, add_image_text, add_link_urls, base_url):
+	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]  # TODO try to segmentate a td with an inner td
+	elements, context, texts = clean_table(elements, add_image_text, add_link_urls, base_url)
 	features = []
-	texts = []
 	for r, row in enumerate(elements):
 		row_data = []
-		row_text = []
 		for c, cell in enumerate(row):
-			if 'data-padding-cell' in cell.attrs:
+			if texts[r][c] in EMPTY_CELL_VALUES:
 				cell_feats = {}
 			else:
 				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c)
 			row_data.append(cell_feats)
-			row_text.append(extract_text(cell, add_link_urls=add_link_urls, base_url=table.url))
 		features.append(row_data)
-		texts.append(row_text)
 	table.elements = elements
 	table.features = features
 	table.texts = texts
 	table.context = context
 	if len(table.elements) and len(table.elements[0]):
-		place_context(table)
+		place_context(table, add_image_text, add_link_urls, base_url)
 		add_variability(table)
 
-def clean_table(table):
+def clean_table(table, add_image_text, add_link_urls, base_url):
 	# convert spans to ints and avoid huge spans
 	for r, row in enumerate(table):
 		for c, cell in enumerate(row):
@@ -136,11 +132,14 @@ def clean_table(table):
 	width = max(len(row) for row in table)
 	table = [row + [PADDING_CELL] * (width - len(row)) for row in table]
 	# transform empty cells into padding cells
-	# XXX extract text and images here
+	texts = []
 	for r, row in enumerate(table):
+		texts.append([])
 		for c, cell in enumerate(row):
-			if not len(' '.join(t.strip() for t in cell.find_all(text=True)).strip()):
+			text = extract_text(cell, add_image_text, add_link_urls, base_url)
+			if text.lower() in EMPTY_CELL_VALUES:
 				table[r][c] = PADDING_CELL
+			texts[r].append(text)
 	# remove non-data rows until no changes are applied to the table
 	changed = True
 	context_rows = {}
@@ -152,7 +151,7 @@ def clean_table(table):
 		r = 0
 		while r < len(table):
 			row = table[r]
-			row_text = [cell.text.strip() for cell in row]
+			row_text = texts[r]
 			all_empty = not any(len(cell) for cell in row_text)
 			all_padding = all('rowspan' in cell.attrs and cell['rowspan'] > 1 or cell == PADDING_CELL for cell in row)
 			is_repeated = row_text in seen_before
@@ -165,6 +164,7 @@ def clean_table(table):
 					else:
 						context_rows[r] = [row[0]]
 				table = table[:r] + table[r + 1:]
+				texts = texts[:r] + texts[r + 1:]
 				context_rows = dict_substract(context_rows, r)
 				changed = True
 			else:
@@ -175,7 +175,7 @@ def clean_table(table):
 		c = 0
 		while c < len(table[0]):
 			col = [row[c] for row in table]
-			col_text = [cell.text.strip() for cell in col]
+			col_text = [row[c] for row in texts]
 			all_empty = all(len(cell) == 0 for cell in col_text)
 			all_padding = all('colspan' in cell.attrs and cell['colspan'] > 1 or cell == PADDING_CELL for cell in col)
 			is_repeated = col_text in seen_before
@@ -188,6 +188,7 @@ def clean_table(table):
 					else:
 						context_cols[c] = [col[0]]
 				table = [row[:c] + row[c + 1:] for row in table]
+				texts = [row[:c] + row[c + 1:] for row in texts]
 				context_cols = dict_substract(context_cols, c)
 				changed = True
 			else:
@@ -199,7 +200,7 @@ def clean_table(table):
 	for k, v in context_cols.items():
 		for nv, vv in enumerate(v):
 			context[('c', k, nv)] = vv
-	return table, context
+	return table, context, texts
 
 def extract_features(element, rows, cols, row_index=None, col_index=None):
 	if 'data-computed-style' not in element.attrs:
@@ -221,7 +222,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 	res['width'] = max(0, min(1, float(css_properties['width'])))
 	res['height'] = max(0, min(1, float(css_properties['height'])))
 	# compute syntax properties
-	text = extract_text(element, add_image_text=False)
+	text = extract_text(element, add_image_text=False, add_link_urls=False, base_url='')
 	ln = len(text)
 	for p, reg in DENSITY_SYNTAX_PROPERTIES.items():
 		if ln:
@@ -261,7 +262,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 		del res['height']
 	return res
 
-def extract_text(element, add_image_text=True, add_link_urls=False, base_url=''):
+def extract_text(element, add_image_text, add_link_urls, base_url):
 	res = []
 	for desc in element.descendants:
 		if desc.name == None:
@@ -278,7 +279,7 @@ def extract_text(element, add_image_text=True, add_link_urls=False, base_url='')
 				res.append('(%s)' % urljoin(base_url, desc['href']))
 	return ' '.join([r.strip() for r in res]).strip()
 
-def place_context(table):
+def place_context(table, add_image_text, add_link_urls, base_url):
 	# extract fullspan rows
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
@@ -293,8 +294,9 @@ def place_context(table):
 	# place middle rows as attributes
 	if len(middle_rows):
 		copy = False
-		periods = [r2[0] - r1[0] for r1, r2 in zip(middle_rows[:-1], middle_rows[1:])] + [rows - middle_rows[-1][0]]
-		if all(p == 1 for p in periods):
+		periods = [r2[0] - r1[0] for r1, r2 in zip(middle_rows[:-1], middle_rows[1:])]
+		if bot_row: periods += [rows - middle_rows[-1][0]]
+		if len(periods) and all(p == 1 for p in periods):
 			if top_row and bot_row:
 				middle_average = vectors_average([r[2] for r in middle_rows])
 				diff_top_row = vector_module(vectors_difference(middle_average, top_row[2]))
@@ -314,11 +316,11 @@ def place_context(table):
 			if len(context_row_candidate):
 				context_row = context_row_candidate[-1] if direction == 'down' else context_row_candidate[0]
 				del table.context[('r', context_row[0], context_row[1])]
-				context_row = (context_row[2], context_row[3], extract_text(context_row[3]))
+				context_row = (context_row[2], context_row[3], extract_text(context_row[3], add_image_text, add_link_urls, base_url))
 			table.features[r].append(context_row[0])
 			table.elements[r].append(context_row[1])
 			table.texts[r].append(context_row[2])
-	table.context = {'_'.join(map(str, k)): extract_text(v) for k, v in table.context.items()}
+	table.context = {'_'.join(map(str, k)): extract_text(v, add_image_text, add_link_urls, base_url) for k, v in table.context.items()}
 	# add header tags as context
 	header_tags = table.element.find_all_previous(FIND_HEADINGS)
 	if len(header_tags):
@@ -514,7 +516,13 @@ def function_correction(table):
 			for col in range(1, table.cols()):
 				if sum(table.functions[r][col] for r in range(table.rows())) > half_height:
 					header_cols.append(col)
-		table.functions = [[1 if col in header_cols or row in header_rows else 0 for col in range(table.cols())] for row in range(table.rows())]
+		for row in range(table.rows()):
+			for col in range(table.cols()):
+				if table.functions[row][col] == -1: continue
+				if col in header_cols or row in header_rows:
+					table.functions[row][col] = 1
+				else:
+					table.functions[row][col] = 0
 
 def detect_orientation_weights(table):
 	max_weight = None
@@ -549,6 +557,10 @@ def detect_orientation_table_diff(table):
 		[c for r in table.features[1:] for c in r[1:]]  # rest
 	]
 	groups = [vectors_average(cells) for cells in groups]
+	# XXX the next 3 lines are a hotfix for a bug only solvable by extracting empty cell features and tracking the empty cells in a different way than comparing their element to PADDING_CELL
+	if not len(groups[3]): groups[3] = next(g for g in groups if len(g))
+	if not len(groups[2]): groups[2] = groups[3]
+	if not len(groups[1]): groups[1] = groups[3]
 	d01 = vector_module(vectors_difference(groups[0], groups[1]))
 	d02 = vector_module(vectors_difference(groups[0], groups[2]))
 	d13 = vector_module(vectors_difference(groups[1], groups[3]))
@@ -586,8 +598,21 @@ def structural_analysis(table):
 			table.kind = 'enumeration'
 	elif first_row_header and first_col_header:
 		table.kind = 'matrix'
-		for c in range(1, table.cols()): table.functions[0][c] = FUNCTIONS_REVERSE['indexer']
-		for r in range(1, table.rows()): table.functions[r][0] = FUNCTIONS_REVERSE['indexer']
+		for row in range(1, table.rows()):
+			if not all(f == 1 for f in table.functions[row] if f != -1):
+				break
+		last_indexer_row = row - 1
+		for col in range(1, table.cols()):
+			if not all(f[col] == 1 for f in table.functions if f[col] != -1):
+				break
+		last_indexer_col = col - 1
+		for row in range(table.rows()):
+			for col in range(table.cols()):
+				if table.functions[row][col] == -1: continue
+				if row <= last_indexer_row and col > last_indexer_col or row > last_indexer_row and col <= last_indexer_col:
+					table.functions[row][col] = 5
+				elif row > last_indexer_row and col > last_indexer_col:
+					table.functions[row][col] = 0
 	elif first_row_header:
 		table.kind = 'horizontal listing'
 	elif first_col_header:
