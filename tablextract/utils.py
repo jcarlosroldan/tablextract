@@ -237,7 +237,7 @@ def cache(target, args, identifier=None, cache_life=3 * 24 * 3600):
 	next time it is executed, the cached output is returned unless cache_life
 	time expires. '''
 	if identifier == None: identifier = target.__name__
-	identifier = sub(r'[/\\\*;\[\]\'\":=,<>]', '_', identifier)
+	identifier = sub(r'[/\\\*;\[\]\'\":=,<>\?\|]', '_', identifier)
 	path = join(PATH_RESOURCES, f'.pickled/{identifier}.pk')
 	makedirs(dirname(path), exist_ok=True)
 	now = time()

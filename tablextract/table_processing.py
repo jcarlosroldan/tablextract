@@ -711,5 +711,5 @@ def compute_score(table):
 		element = soup('<table>%s</table>' % ''.join(['<tr>%s</tr>' % ''.join(map(str, row)) for row in table.elements]), 'html.parser').table
 		tokens = [kw.strip() for text in element.find_all(text=True, recursive=True) for kw in text.split(' ')]
 		tokens_after = [kw.strip() for rec in table.record for k, v in rec.items() for kw in k.split(' ') + v.split(' ')]
-		information_loss_score = len([t for t in tokens if t in tokens_after]) / len(tokens)
+		information_loss_score = len([t for t in tokens if t in tokens_after]) / len(tokens) if len(tokens) else 1
 		table.score = (variability_score * numeric_header_score * data_header_score * information_loss_score) ** (1 / 4)
