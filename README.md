@@ -58,7 +58,7 @@ You can install this library via pip using:
 
 This library only have one function `tables`, that returns a list of `Table` objects.
 
-`tables(url, css_filter='table', xpath_filter=None, request_cache_time=None, add_link_urls=False)`
+`tables(url, css_filter='table', xpath_filter=None, request_cache_time=None, add_link_urls=False, normalization'min-max-global', clustering_features=['style', 'syntax', 'structural', 'semantic'], dimensionality_reduction='off', clustering_method='k-means')`
 
 * `url: str`: URL of the site where tables should be downloaded from.
 * `css_filter: str`: Return just tables that match the CSS selector.
@@ -66,6 +66,10 @@ This library only have one function `tables`, that returns a list of `Table` obj
 * `request_cache_time: int`: Cache the downloaded documents for that number of seconds.
 * `add_image_text: bool`: Extract the image title/alt/URL as part of the cell text in `Table.texts`.
 * `add_link_urls: bool`: Extract the links URL as part of the cell text in `Table.texts`.
+* `normalization: str`: The kind of normalization applied to the features. Allowed values are `min-max-global` to use MinMax normalization with values obtained from a big corpus of tables after removing outliers, `min-max-local` to use MinMax normalization with the minimum and maximum values of each feature in the table, `standard` to apply a Standard normalization and `softmax` to apply a SoftMax normalization.
+* `clustering_features: list`: The clustering feature groups that are used to identify the cell functions. Any non-empty subset of style', 'syntax', 'structural' and 'semantic' is allowed.
+* `dimensionality_reduction`: The technique used to reduce the cells dimensionality before clustering. Allowed values are `off` to disable it, `pca` and `feature-agglomeration`.
+* `clustering_method`: The method used to cluster the cells. Allowed methods are `k-means` and `agglomerative`.
 
 Each `Table` object has the following properties and methods:
 
@@ -94,6 +98,19 @@ If you update this library and you get the error `sre_constants.error: bad escap
 * Create a new environment to work with: `python3 -m venv my_new_env`, `source my_new_env/bin/activate`
 
 ## Changes
+
+### v1.4
+
+Released on Feb 26, 2020.
+
+* Added parameter normalization to `tables`.
+* Added parameter clustering_features to `tables`.
+* Added parameter dimensionality_reduction to `tables`.
+* Added parameter clustering_method to `tables`.
+* Bugfix: When averaging feature values of cell subtrees, some features were outside the bounds due to child nodes having larger area than parent nodes.
+* Bugfix: Dependency regex not installed at setup.
+* Simplified main call to `tables`.
+* Overall speed and efficiency increase.
 
 ### v1.3
 
