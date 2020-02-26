@@ -4,8 +4,8 @@ from collections import Counter, OrderedDict
 from copy import deepcopy
 from datetime import datetime as dt, timedelta
 from date_extractor import extract_date
-from math import sqrt
-from numpy import array as ndarray
+from math import sqrt, exp
+from numpy import array as ndarray, errstate
 from nltk import download as nltk_download, pos_tag, word_tokenize
 from nltk.corpus import stopwords
 try:
@@ -22,13 +22,15 @@ from regex import findall, sub, compile, DOTALL, match
 from requests import get
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
-from sklearn.cluster import KMeans, MiniBatchKMeans, SpectralClustering
+from sklearn.cluster import KMeans, AgglomerativeClustering, FeatureAgglomeration, AgglomerativeClustering
+from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from sys import stdout, maxsize, platform
 from time import strftime, sleep, time
 from traceback import format_exc
 from urllib.parse import urljoin
+from warnings import catch_warnings, simplefilter
 from xml.etree.cElementTree import iterparse
 
 # --- constants ---------------------------------------------------------------
@@ -45,10 +47,15 @@ URL_GECKODRIVER = 'https://github.com/mozilla/geckodriver/releases'
 INLINE_TAGS = ['a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code', 'col', 'colgroup', 'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'object', 'output', 'q', 'samp', 'script', 'select', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'tt', 'var']
 EMPTY_CELL_VALUES = {c * n for n in range(1, 4) for c in ['', '.', '?', '\'', '-', '–', '—']}  # TODO extract language-dependant empty cells, such as n/a
 
+PYTHON_EXP_LIMIT = 500  # safe limit to avoid overflows in exp() operations
+
 with open(join(PATH_RESOURCES, 'add_render.js'), 'r', encoding='utf-8') as fp:
 	SCRIPT_ADD_RENDER = fp.read()
 
 # --- math --------------------------------------------------------------------
+
+def clamp(value, smallest=0, largest=1):
+	return max(smallest, min(value, largest))
 
 def distinct(lst, uniqueness_function):
 	''' Returns a list in the same order with just the elements with a distinct
@@ -149,7 +156,10 @@ def binarize_categorical(vectors):
 	''' Given a 2-D list of mixed feature vectors, transform every categorical
 	feature into a binary one, using the seen values of all the vectors. '''
 	vectors = deepcopy(vectors)
-	cat_vector = next([k for k, v in cell.items() if type(v) == str] for row in vectors for cell in row if len(cell))
+	try:
+		cat_vector = next([k for k, v in cell.items() if type(v) == str] for row in vectors for cell in row if len(cell))
+	except StopIteration:
+		cat_vector = []
 	for f in cat_vector:
 		values = list(set(cell[f] for row in vectors for cell in row if len(cell)))
 		for r, row in enumerate(vectors):
@@ -299,7 +309,7 @@ def get_driver(headless=True, disable_images=True, open_links_same_tab=False):
 		exec_path, log_path = find_driver_path()
 		try:
 			_driver = Firefox(options=opts, executable_path=exec_path, log_path=log_path)
-		except: # if driver not detected, try to use the default, if any
+		except:  # if driver not detected, try to use the default, if any
 			_driver = Firefox(options=opts, log_path=log_path)
 		_driver.set_page_load_timeout(15)
 		register(close_driver)

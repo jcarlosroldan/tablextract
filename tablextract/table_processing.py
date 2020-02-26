@@ -21,8 +21,8 @@ BOOLEAN_SYNTAX_PROPERTIES = {'match-%s' % k: compile('^%s$' % v).match for k, v 
 BOOLEAN_SYNTAX_PROPERTIES['match-date'] = find_dates
 PROPERTY_KINDS = {
 	'style': ['background-color-b', 'background-color-g', 'background-color-r', 'border-bottom-color-b', 'border-bottom-color-g', 'border-bottom-color-r', 'border-bottom-width', 'border-left-color-b', 'border-left-color-g', 'border-left-color-r', 'border-left-width', 'border-right-color-b', 'border-right-color-g', 'border-right-color-r', 'border-right-width', 'border-top-color-b', 'border-top-color-g', 'border-top-color-r', 'border-top-width', 'color-b', 'color-g', 'color-r', 'display', 'font-family', 'font-size', 'font-weight', 'outline-color-b', 'outline-color-g', 'outline-color-r', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'text-align', 'text-decoration', 'text-transform', 'vertical-align'],
-	'syntax': ['density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-money', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
-	'structural': ['children', 'colspan', 'rowspan', 'tag', 'relative-col', 'relative-row'],
+	'syntax': ['length', 'density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-money', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
+	'structural': ['children', 'colspan', 'rowspan', 'tag', 'col', 'row'],
 	'semantic': ['density-postag-%s' % tc for tc in POS_TAG_CATEGORIES]
 }
 PROPERTY_KINDS = {k: v + ['%s-variability-%s' % (dim, feat) for feat in v for dim in ['row', 'col', 'tab']] for k, v in PROPERTY_KINDS.items()}
@@ -56,10 +56,7 @@ class Table:
 			return 0
 
 	def cells(self):
-		if len(self.features):
-			return len(self.features) * len(self.features[0])
-		else:
-			return 0
+		return self.rows() * self.cols()
 
 	def __repr__(self):
 		res = 'Table(url=%s, xpath=%s' % (self.url, self.xpath)
@@ -69,16 +66,18 @@ class Table:
 			res += ')'
 		return res
 
-def locate(url, document):
+def locate(url, css_filter='table', xpath_filter=None, request_cache_time=0):
+	document = cache(get_with_render, (url, css_filter), identifier=url, cache_life=request_cache_time)
+	document = soup(document, 'html.parser')
 	for table in document.select('table[data-xpath]'):
-		if len(table.select('tr')) < 2 or len(table.select('th,td')) < 4:
+		if len(table.select('tr')) < 2 or len(table.select('th,td')) < 4 or table['data-xpath'].count('table') > 1:
 			table.decompose()
 	for table in document.select('table[data-xpath]'):
-		if not len(table.select('table')):
+		if xpath_filter == None or table['data-xpath'] == xpath_filter:
 			yield Table(url, table['data-xpath'], table)
 
-def segmentate(table, add_image_text, add_link_urls, base_url):
-	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]  # TODO try to segmentate a td with an inner td
+def segmentate(table, add_image_text, add_link_urls, base_url, normalization='min-max-global'):
+	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]  # td within td and th within th are solved by selenium
 	elements, context, texts = clean_table(elements, add_image_text, add_link_urls, base_url)
 	features = []
 	for r, row in enumerate(elements):
@@ -94,9 +93,10 @@ def segmentate(table, add_image_text, add_link_urls, base_url):
 	table.features = features
 	table.texts = texts
 	table.context = context
-	if len(table.elements) and len(table.elements[0]):
+	if table.rows() > 0 and table.cols() > 0:
 		place_context(table, add_image_text, add_link_urls, base_url)
 		add_variability(table)
+		normalize(table, normalization)
 
 def clean_table(table, add_image_text, add_link_urls, base_url):
 	# convert spans to ints and avoid huge spans
@@ -211,16 +211,16 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 	res = {}
 	for p in COLOR_STYLE_PROPERTIES:
 		val = css_properties[p]
-		res[p + '-r'], res[p + '-g'], res[p + '-b'] = [float(c) / 255 for c in FIND_DIGITS(val)[:3]]
+		res[p + '-r'], res[p + '-g'], res[p + '-b'] = [float(c) for c in FIND_DIGITS(val)[:3]]
 	for p in CATEGORICAL_STYLE_PROPERTIES:
 		if p != 'tag':
 			res[p] = css_properties[p]
 	for p, (mn, wide) in NUMERIC_STYLE_PROPERTIES.items():
 		val = css_properties[p]
-		res[p] = max(0, min(1, (float(FIND_DIGITS(val)[0]) - mn) / wide))
+		res[p] = float(FIND_DIGITS(val)[0])
 	res['tag'] = element.name
-	res['width'] = max(0, min(1, float(css_properties['width'])))
-	res['height'] = max(0, min(1, float(css_properties['height'])))
+	res['width'] = clamp(float(css_properties['width']))
+	res['height'] = clamp(float(css_properties['height']))
 	# compute syntax properties
 	text = extract_text(element, add_image_text=False, add_link_urls=False, base_url='')
 	ln = len(text)
@@ -231,7 +231,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 			res[p] = 0
 	for p, reg in BOOLEAN_SYNTAX_PROPERTIES.items():
 		res[p] = 1 if reg(text) else 0
-	res['length'] = min(ln / 8, 1)
+	res['length'] = ln
 	for p, reg in SYNTAX_NTH_OF_TYPE_PROPERTIES.items():
 		res['first-char-%s' % p] = 1 if len(text) and reg(text[0]) else 0
 		res['last-char-%s' % p] = 1 if len(text) and reg(text[-1]) else 0
@@ -252,12 +252,12 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 	nodes.insert(0, [area, res])
 	res = vectors_weighted_average(nodes)
 	res['tag'] = element.name
-	res['children'] = max(0, min(1, len(element.find_all()) / 5))
+	res['children'] = len(element.find_all())
 	if row_index != None:
-		res['colspan'] = max(0, min(1, int(css_properties['colspan']) / cols))
-		res['rowspan'] = max(0, min(1, int(css_properties['rowspan']) / rows))
-		res['relative-row'] = row_index / rows
-		res['relative-col'] = col_index / cols
+		res['colspan'] = int(css_properties['colspan'])
+		res['rowspan'] = int(css_properties['rowspan'])
+		res['row'] = row_index
+		res['col'] = col_index
 		del res['width']
 		del res['height']
 	return res
@@ -279,7 +279,7 @@ def extract_text(element, add_image_text, add_link_urls, base_url):
 				res.append('(%s)' % urljoin(base_url, desc['href']))
 	return ' '.join([r.strip() for r in res]).strip()
 
-def place_context(table, add_image_text, add_link_urls, base_url):
+def place_context(table, add_image_text, add_link_urls, base_url):  # TODO test factorization improvement
 	# extract fullspan rows
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
@@ -348,7 +348,7 @@ def place_context(table, add_image_text, add_link_urls, base_url):
 		table.context['text_after'] = ''
 
 def add_variability(table):
-	if len(table.features) == 0:
+	if table.rows() == 0:
 		table.variabilities = {}
 		for orientation in ORIENTATIONS:
 			table.variabilities[orientation] = 0
@@ -400,7 +400,7 @@ def add_variability(table):
 				table.features[r][c] = {**table.features[r][c], **variabilities}
 				total_variability[orientation].append(vector_module(variabilities))
 
-				for feature_type, features in PROPERTY_KINDS.items():
+				for feature_type in PROPERTY_KINDS:
 					total_variability[(orientation, feature_type)].append(vector_module({k: v for k, v in variabilities.items() if k in PROPERTY_KINDS[feature_type]}))
 	table.variabilities = {k: sum(v) / len(v) for k, v in total_variability.items()}
 
@@ -411,16 +411,84 @@ def add_variability(table):
 			for orientation in ORIENTATIONS:
 				table.variabilities[(orientation, feature_type)] /= ft_sum
 
-def functional_analysis(table):
+def normalize(table, normalization='min-max-global'):
+	rows, cols = table.rows(), table.cols()
+	if normalization == 'min-max-global':
+		for r, row in enumerate(table.features):
+			for c, cell in enumerate(row):
+				if len(table.features[r][c]) == 0: continue
+				for prefix in ('', 'row-variability-', 'col-variability-', 'tab-variability-'):
+					for feat in COLOR_STYLE_PROPERTIES:
+						for color in ('-r', '-g', '-b'):
+							table.features[r][c][prefix + feat + color] /= 255
+					for feat, (start, wide) in NUMERIC_STYLE_PROPERTIES.items():
+						table.features[r][c][prefix + feat] = clamp((table.features[r][c][prefix + feat] - start) / wide)
+					token_length = sum(v for k, v in table.features[r][c].items() if k.startswith('density-postag-'))
+					table.features[r][c][prefix + 'children'] = clamp(table.features[r][c][prefix + 'children'] / 5)
+					table.features[r][c][prefix + 'length'] = clamp(table.features[r][c][prefix + 'length'] / 8)
+					for feat in ('rowspan', 'row'):
+						table.features[r][c][prefix + feat] = clamp(table.features[r][c][prefix + feat] / rows)
+					for feat in ('colspan', 'col'):
+						table.features[r][c][prefix + feat] = clamp(table.features[r][c][prefix + feat] / cols)
+	elif normalization == 'min-max-local':
+		for kind in PROPERTY_KINDS.values():
+			for feat in kind:
+				values = [table.features[r][c][feat] for r in range(rows) for c in range(cols) if feat in table.features[r][c]]
+				if any(isinstance(v, str) for v in values): continue
+				start = min(values)
+				wide = max(values) - start
+				for r in range(rows):
+					for c in range(cols):
+						if feat in table.features[r][c]:
+							if wide > 0:
+								table.features[r][c][feat] = (table.features[r][c][feat] - start) / wide
+							else:
+								table.features[r][c][feat] = 0
+	elif normalization == 'standard':
+		for kind in PROPERTY_KINDS.values():
+			for feat in kind:
+				values = [table.features[r][c][feat] for r in range(rows) for c in range(cols) if feat in table.features[r][c]]
+				if any(isinstance(v, str) for v in values): continue
+				mean = sum(values) / len(values)
+				stdev = sqrt(sum((x - mean)**2 for x in values) / (len(values) - 1))
+				for r in range(rows):
+					for c in range(cols):
+						if feat in table.features[r][c]:
+							if stdev > 0:
+								val = (table.features[r][c][feat] - mean) / stdev
+								table.features[r][c][feat] = clamp((val + 1) / 2)
+							else:
+								table.features[r][c][feat] = 0
+	elif normalization == 'softmax':
+		for kind in PROPERTY_KINDS.values():
+			for feat in kind:
+				values = [table.features[r][c][feat] for r in range(rows) for c in range(cols) if feat in table.features[r][c]]
+				if any(isinstance(v, str) for v in values): continue
+				tot = sum(exp(clamp(v, smallest=-PYTHON_EXP_LIMIT, largest=PYTHON_EXP_LIMIT)) for v in values)
+				for r in range(rows):
+					for c in range(cols):
+						if feat in table.features[r][c]:
+							if tot > 0:
+								table.features[r][c][feat] = exp(clamp(table.features[r][c][feat], smallest=-PYTHON_EXP_LIMIT, largest=PYTHON_EXP_LIMIT)) / tot
+							else:
+								table.features[r][c][feat] = 0
+
+def discriminate(table):
+	''' Returns true if the table is a data table. '''
+	return table.rows() >= 2 and table.cols() >= 2
+
+def functional_analysis(table, clustering_features=['style', 'syntax', 'structural', 'semantic'], dimensionality_reduction='off', clustering_method='k-means'):
 	# ensure variables are normalised
 	for row in table.features:
 		for cell in row:
 			for k, v in cell.items():
 				if not (type(v) == str or -1e-12 <= v <= 1 + 1e-12):
 					log('error', f'Feature {k} outside the boundaries: {v}.')
+	# cluster the cells according to an identifier to avoid repetition
 	xpath_table = [[cell['data-xpath'] if cell != PADDING_CELL else '' for cell in row] for row in table.elements]
 	kind_functions = {}
 	for kind, feature_names in PROPERTY_KINDS.items():
+		if kind not in clustering_features: continue
 		vector_table = []
 		for row in table.features:
 			vector_table.append([])
@@ -429,40 +497,61 @@ def functional_analysis(table):
 				for k, v in cell.items():
 					if k in feature_names:
 						vector_table[-1][-1][k] = v
-		kind_functions[kind] = cluster_vector_table(vector_table, xpath_table)
-
+		kind_functions[kind] = cluster_vector_table(vector_table, xpath_table, dimensionality_reduction, clustering_method)
+	# recompute the clustering giving the same weight to every feature group
 	functions = [[-1] * table.cols() for _ in range(table.rows())]
 	for r in range(table.rows()):
 		for c in range(table.cols()):
 			if len(table.features[r][c]):
 				cell_function = {0: [], 1: []}
 				for kind in PROPERTY_KINDS:
-					cell_function[kind_functions[kind][0][r][c]].append(kind_functions[kind][1])
+					if kind in clustering_features:
+						cell_function[kind_functions[kind][0][r][c]].append(kind_functions[kind][1])
 				cell_function = max((sum(v) / len(v), k) for k, v in cell_function.items() if len(v))[1]
 				functions[r][c] = cell_function
 
 	table.functions = functions
 	function_correction(table)
 
-def cluster_vector_table(vector_table, xpath_table):
-	# get cluster values
-	rows, cols = len(xpath_table), len(xpath_table[0])
-	features = binarize_categorical(vector_table)
+def cluster_vector_table(instances, identifiers=None, dimensionality_reduction='off', clustering_method='k-means'):
+	# add artificial identifiers
+	if identifiers is None:
+		row_len = len(instances[0])
+		identifiers = [[row_len * r + c for c, col in enumerate(instances[r])] for r, row in enumerate(instances)]
+	# binarize
+	features = binarize_categorical(instances)
+	# build the identifier-instance table
+	rows, cols = len(identifiers), len(identifiers[0])
 	cells = [
 		(xp, [f[1] for f in sorted(ft.items())])
-		for r_ft, r_xp in zip(features, xpath_table)
+		for r_ft, r_xp in zip(features, identifiers)
 		for ft, xp in zip(r_ft, r_xp)
 		if len(ft)
 	]
-	#cells = STANDARD_SCALER.fit_transform([c[1] for c in cells])
-	clust = KMeans(n_clusters=2).fit([c[1] for c in cells])
+	insts = [c[1] for c in cells]
+	# handle dimensionality reduction
+	if dimensionality_reduction != 'off':
+		if dimensionality_reduction == 'pca':
+			reducer = PCA(n_components=min(10, len(insts), len(insts[0])))
+		elif dimensionality_reduction == 'feature-agglomeration':
+			reducer = FeatureAgglomeration(n_clusters=min(10, len(insts), len(insts[0])))
+		with errstate(divide='ignore', invalid='ignore'):
+			insts = list(list(row) for row in reducer.fit_transform(insts))
+	# clusterize
+	if clustering_method == 'k-means':
+		clusterer = KMeans(n_clusters=2)
+	elif clustering_method == 'agglomerative':
+		clusterer = AgglomerativeClustering(n_clusters=2)
+	with catch_warnings():
+		simplefilter('ignore')
+		clust = clusterer.fit(insts)
 	cells = {xpath: int(lab) for (xpath, _), lab in zip(cells, clust.labels_)}
 	functions = []
 	for r in range(rows):
 		functions.append([])
 		for c in range(cols):
 			if len(features[r][c]):
-				functions[-1].append(cells[xpath_table[r][c]])
+				functions[-1].append(cells[identifiers[r][c]])
 			else:
 				functions[-1].append(-1)
 	if table_all_equal(functions):
@@ -523,16 +612,6 @@ def function_correction(table):
 					table.functions[row][col] = 1
 				else:
 					table.functions[row][col] = 0
-
-def detect_orientation_weights(table):
-	max_weight = None
-	max_orientation = None
-	for orientation in ORIENTATIONS:
-		weight = table.variabilities[(orientation, 'syntax')] + table.variabilities[(orientation, 'style')] + table.variabilities[(orientation, 'semantic')] + table.variabilities[(orientation, 'structural')]
-		if max_weight == None or weight > max_weight:
-			max_weight = weight
-			max_orientation = orientation
-	return orientation
 
 def detect_orientation_silhouette(table):
 	labels = [[], [], []]
@@ -635,7 +714,6 @@ def interpret(table):
 	table.record = res
 
 def simplify_headers(table):
-	# TODO Double headers, split headers
 	# compute how many header rows and cols are used
 	first_header_rows = 0
 	for row in table.functions:

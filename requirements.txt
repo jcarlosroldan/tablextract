@@ -4,3 +4,4 @@ date-extractor>=3.9.1
 nltk>=3.3
 scikit-learn>=0.19.2
 selenium>=3.14.1
+regex>=2020.2.20

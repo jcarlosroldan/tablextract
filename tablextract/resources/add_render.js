@@ -11,7 +11,7 @@ function pathTo(element) {
 var removeElements = []
 function addRender(subtree) {
 	var style = getComputedStyle(subtree)
-	if (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {
+	if (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || subtree.offsetHeight == undefined || subtree.offsetWidth == 0 || subtree.offsetHeight == 0 || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {
 		removeElements.push(subtree)
 		return
 	}
