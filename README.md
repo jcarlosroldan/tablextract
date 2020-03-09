@@ -66,6 +66,7 @@ This library only have one function `tables`, that returns a list of `Table` obj
 * `request_cache_time: int`: Cache the downloaded documents for that number of seconds.
 * `add_image_text: bool`: Extract the image title/alt/URL as part of the cell text in `Table.texts`.
 * `add_link_urls: bool`: Extract the links URL as part of the cell text in `Table.texts`.
+* `text_metadata_dict: dict`: Dictionary of cell texts and likelyhood of it being meta-data. See [Meta-data probability corpus](https://github.com/juancroldan/tablextract/releases/tag/1.4.1).
 * `normalization: str`: The kind of normalization applied to the features. Allowed values are `min-max-global` to use MinMax normalization with values obtained from a big corpus of tables after removing outliers, `min-max-local` to use MinMax normalization with the minimum and maximum values of each feature in the table, `standard` to apply a Standard normalization and `softmax` to apply a SoftMax normalization.
 * `clustering_features: list`: The clustering feature groups that are used to identify the cell functions. Any non-empty subset of style', 'syntax', 'structural' and 'semantic' is allowed.
 * `dimensionality_reduction`: The technique used to reduce the cells dimensionality before clustering. Allowed values are `off` to disable it, `pca` and `feature-agglomeration`.
@@ -98,6 +99,13 @@ If you update this library and you get the error `sre_constants.error: bad escap
 * Create a new environment to work with: `python3 -m venv my_new_env`, `source my_new_env/bin/activate`
 
 ## Changes
+
+### v1.5
+
+Released on Mar 03, 2020.
+
+* Added parameter text_metadata_dict to `tables`.
+* Empty table bugfixes to introduce individual step processing.
 
 ### v1.4
 

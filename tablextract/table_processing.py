@@ -23,7 +23,7 @@ PROPERTY_KINDS = {
 	'style': ['background-color-b', 'background-color-g', 'background-color-r', 'border-bottom-color-b', 'border-bottom-color-g', 'border-bottom-color-r', 'border-bottom-width', 'border-left-color-b', 'border-left-color-g', 'border-left-color-r', 'border-left-width', 'border-right-color-b', 'border-right-color-g', 'border-right-color-r', 'border-right-width', 'border-top-color-b', 'border-top-color-g', 'border-top-color-r', 'border-top-width', 'color-b', 'color-g', 'color-r', 'display', 'font-family', 'font-size', 'font-weight', 'outline-color-b', 'outline-color-g', 'outline-color-r', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'text-align', 'text-decoration', 'text-transform', 'vertical-align'],
 	'syntax': ['length', 'density-alphanumeric', 'density-digit', 'density-lowercase', 'density-stopwords', 'density-symbol', 'density-token', 'density-uppercase', 'density-whitespace', 'match-allcaps', 'match-amount', 'match-capitalised', 'match-date', 'match-empty', 'match-money', 'match-range'] + ['first-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES] + ['last-char-%s' % k for k in SYNTAX_NTH_OF_TYPE_PROPERTIES],
 	'structural': ['children', 'colspan', 'rowspan', 'tag', 'col', 'row'],
-	'semantic': ['density-postag-%s' % tc for tc in POS_TAG_CATEGORIES]
+	'semantic': ['corpus-metadata'] + ['density-postag-%s' % tc for tc in POS_TAG_CATEGORIES]
 }
 PROPERTY_KINDS = {k: v + ['%s-variability-%s' % (dim, feat) for feat in v for dim in ['row', 'col', 'tab']] for k, v in PROPERTY_KINDS.items()}
 STANDARD_SCALER = StandardScaler()
@@ -76,7 +76,7 @@ def locate(url, css_filter='table', xpath_filter=None, request_cache_time=0):
 		if xpath_filter == None or table['data-xpath'] == xpath_filter:
 			yield Table(url, table['data-xpath'], table)
 
-def segmentate(table, add_image_text, add_link_urls, base_url, normalization='min-max-global'):
+def segmentate(table, add_image_text, add_link_urls, base_url, normalization='min-max-global', text_metadata_dict=None):
 	elements = [[cell for cell in row.select('th,td')] for row in table.element.select('tr')]  # td within td and th within th are solved by selenium
 	elements, context, texts = clean_table(elements, add_image_text, add_link_urls, base_url)
 	features = []
@@ -86,7 +86,7 @@ def segmentate(table, add_image_text, add_link_urls, base_url, normalization='mi
 			if texts[r][c] in EMPTY_CELL_VALUES:
 				cell_feats = {}
 			else:
-				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c)
+				cell_feats = extract_features(cell, len(elements), len(elements[0]), r, c, text_metadata_dict)
 			row_data.append(cell_feats)
 		features.append(row_data)
 	table.elements = elements
@@ -202,7 +202,7 @@ def clean_table(table, add_image_text, add_link_urls, base_url):
 			context[('c', k, nv)] = vv
 	return table, context, texts
 
-def extract_features(element, rows, cols, row_index=None, col_index=None):
+def extract_features(element, rows, cols, row_index=None, col_index=None, text_metadata_dict=None):
 	if 'data-computed-style' not in element.attrs:
 		return None
 	css_properties = [prop.split(':') for prop in element['data-computed-style'].split('|')]
@@ -238,6 +238,8 @@ def extract_features(element, rows, cols, row_index=None, col_index=None):
 	# compute semantic properties
 	for k, v in lexical_densities(text).items():
 		res['density-postag-%s' % k] = v
+	if text_metadata_dict is not None:
+		res['corpus-metadata'] = text_metadata_dict[text] if text in text_metadata_dict else .5
 	# add children render info
 	area = res['width'] * res['height']
 	nodes = []
@@ -572,7 +574,7 @@ def cluster_vector_table(instances, identifiers=None, dimensionality_reduction='
 	for r, row in enumerate(functions):
 		for c, cell in enumerate(row):
 			pos[cell].append((r, c))
-	pos = [[sum([e[n] for e in elem]) / len(elem) for n in range(2)] for elem in pos]
+	pos = [[sum([e[n] for e in elem]) / len(elem) if len(elem) else 0 for n in range(2)] for elem in pos]
 	pos = [sqrt((x / rows)**2 + (y / cols)**2) for x, y in pos]
 	for c, d in enumerate(pos):
 		header_likelyhood[c].append(1 - d)
