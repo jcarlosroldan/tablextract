@@ -245,7 +245,7 @@ def extract_features(element, rows, cols, row_index=None, col_index=None, text_m
 	nodes = []
 	for c in element.find_all(recursive=False):
 		if len(c.text.strip()) and 'data-computed-style' in c.attrs:
-			child = extract_features(c, rows, cols)
+			child = extract_features(c, rows, cols, text_metadata_dict=text_metadata_dict)
 			if child == None:
 				continue
 			child_area = min(area, child['width'] * child['height'])
