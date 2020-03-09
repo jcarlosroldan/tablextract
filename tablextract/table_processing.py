@@ -94,7 +94,7 @@ def segmentate(table, add_image_text, add_link_urls, base_url, normalization='mi
 	table.texts = texts
 	table.context = context
 	if table.rows() > 0 and table.cols() > 0:
-		place_context(table, add_image_text, add_link_urls, base_url)
+		place_context(table, add_image_text, add_link_urls, base_url, text_metadata_dict)
 		add_variability(table)
 		normalize(table, normalization)
 
@@ -281,11 +281,11 @@ def extract_text(element, add_image_text, add_link_urls, base_url):
 				res.append('(%s)' % urljoin(base_url, desc['href']))
 	return ' '.join([r.strip() for r in res]).strip()
 
-def place_context(table, add_image_text, add_link_urls, base_url):  # TODO test factorization improvement
+def place_context(table, add_image_text, add_link_urls, base_url, text_metadata_dict=None):  # TODO test factorization improvement
 	# extract fullspan rows
 	rows, cols = table.rows(), table.cols()
 	context_rows = list(sorted(
-		(position, i, extract_features(v, rows, cols, position, 0), v)
+		(position, i, extract_features(v, rows, cols, position, 0, text_metadata_dict=text_metadata_dict), v)
 		for (direction, position, i), v in table.context.items() if direction == 'r')
 	)
 	top_row = [row for row in context_rows if row[0] == 0]
