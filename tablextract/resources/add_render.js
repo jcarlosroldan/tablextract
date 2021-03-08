@@ -11,6 +11,12 @@ function pathTo(element) {
 var removeElements = []
 function addRender(subtree) {
 	var style = getComputedStyle(subtree)
+	// break is often used inside cells for data item separation
+	// Example: https://secondlifestorage.com/index.php?threads/a123systems-apr18650m1a-cell-specifications.4715/
+	// See "Charging" and "Discharging" cells
+	if (subtree.tagName == 'BR') { 
+		return
+	}
 	if (subtree.tagName == 'TR' && subtree.children.length == 0 || subtree.offsetWidth == undefined || subtree.offsetHeight == undefined || subtree.offsetWidth == 0 || subtree.offsetHeight == 0 || style['display'] == 'none' || subtree.tagName == 'SUP' && subtree.className == 'reference') {
 		removeElements.push(subtree)
 		return
