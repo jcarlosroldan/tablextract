@@ -304,7 +304,7 @@ def get_driver(headless=True, disable_images=True, open_links_same_tab=False):
 		if open_links_same_tab:
 			opts.set_preference('browser.link.open_newwindow.restriction', 0)
 			opts.set_preference('browser.link.open_newwindow', 1)
-		if headless: opts.set_headless()
+		if headless: opts.headless = True
 		if disable_images: opts.set_preference('permissions.default.image', 2)
 		exec_path, log_path = find_driver_path()
 		try:
